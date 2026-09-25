@@ -1,0 +1,63 @@
+---
+import { Image } from 'astro:assets';
+
+import aboutBg from '../../assets/images/about/about-bg.jpg';
+import { buyingSteps } from '../../data/buying-steps';
+import Container from './Container.astro';
+
+interface Props {
+  /** Only set on the homepage, where this is its own section with no page-level heading above it. */
+  eyebrow?: string;
+}
+
+const { eyebrow } = Astro.props;
+---
+
+<section class="py-section lg:py-section-lg">
+  <Container>
+    {
+      eyebrow && (
+        <p class="eyebrow mb-4" data-reveal>
+          {eyebrow}
+        </p>
+      )
+    }
+    <div class="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+      <div class="relative overflow-hidden rounded-lg" data-reveal>
+        <Image
+          src={aboutBg}
+          alt="The Boston Motors showroom storefront"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 1024px) 45vw, 100vw"
+          loading="lazy"
+          class="aspect-4/3 w-full object-cover"
+        />
+        <div class="absolute inset-0 bg-black/25"></div>
+      </div>
+
+      <div data-reveal>
+        <h2 class="text-3xl sm:text-4xl">How buying works</h2>
+        <p class="measure mt-6 text-muted">
+          Four steps between browsing and driving away — no fabricated timelines, just the shape
+          of the process.
+        </p>
+
+        <ol class="mt-10 flex flex-col gap-6">
+          {
+            buyingSteps.map((step, index) => (
+              <li class="flex gap-5">
+                <span class="font-display text-sm font-semibold text-teal-light">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h3 class="font-display text-lg">{step.title}</h3>
+                  <p class="mt-1 text-sm text-muted">{step.description}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </Container>
+</section>

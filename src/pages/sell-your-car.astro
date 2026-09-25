@@ -1,0 +1,122 @@
+---
+import Button from '../components/ui/Button.astro';
+import Container from '../components/ui/Container.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/**
+ * Secondary landing page — deliberately NOT in the main navigation. Reached
+ * from the homepage CTA, the Cars page and the final CTA.
+ *
+ * DRAFT COPY throughout. In particular, "what we look for" makes no commitment
+ * about which vehicles are accepted, what they are worth, or how quickly anyone
+ * responds. Boston Motors must supply the real terms.
+ */
+
+const steps = [
+  { title: 'Send the details', body: 'Vehicle, year and condition, plus how to reach you.' },
+  { title: 'We review it', body: 'Your enquiry goes to the team directly, not a queue.' },
+  { title: 'We come back to you', body: 'A conversation about the vehicle and what happens next.' },
+];
+
+const field =
+  'mt-2 w-full rounded-md border border-line bg-panel px-4 py-3 text-fg placeholder:text-muted/60 transition-colors focus:border-teal-light focus:outline-none';
+const label = 'font-display text-sm font-medium text-fg';
+---
+
+<BaseLayout
+  title="Sell your vehicle"
+  description="Thinking of selling your luxury vehicle? Send Boston Motors the details for a discreet enquiry."
+>
+  <PageHeader
+    eyebrow="Sell your vehicle"
+    title="Thinking of selling your luxury vehicle?"
+    intro="Send us the details and we will come back to you directly."
+  />
+
+  <section class="py-section lg:py-section-lg">
+    <Container>
+      <ol class="grid gap-6 sm:grid-cols-3">
+        {
+          steps.map((step, index) => (
+            <li
+              class="rounded-md border border-line bg-panel p-7"
+              data-reveal
+              style={`--reveal-delay: ${index * 90}ms`}
+            >
+              <span class="font-display text-xs font-semibold tracking-[0.18em] text-teal-light">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <h2 class="mt-3 font-display text-xl font-semibold">{step.title}</h2>
+              <p class="mt-2 card-copy">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </Container>
+  </section>
+
+  <section class="border-t border-line bg-band py-section">
+    <Container size="narrow">
+      <h2 class="text-3xl sm:text-4xl">Vehicle enquiry</h2>
+      <p class="measure mt-4 text-muted">
+        The more you can tell us, the more useful our reply will be.
+      </p>
+
+      {/*
+        TODO (blocking before launch): no destination yet. Same constraint as the
+        contact form — this static site needs a form service endpoint or an SSR
+        adapter plus an Astro action. Photo upload in particular requires a real
+        backend, so it is not offered here yet.
+      */}
+      <form class="mt-10 flex flex-col gap-6" data-reveal>
+        <div class="grid gap-6 sm:grid-cols-2">
+          <div>
+            <label class={label} for="name">Name</label>
+            <input class={field} type="text" id="name" name="name" required autocomplete="name" />
+          </div>
+          <div>
+            <label class={label} for="phone">Phone</label>
+            <input class={field} type="tel" id="phone" name="phone" required autocomplete="tel" />
+          </div>
+        </div>
+
+        <div>
+          <label class={label} for="email">Email</label>
+          <input class={field} type="email" id="email" name="email" required autocomplete="email" />
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2">
+          <div>
+            <label class={label} for="brand">Vehicle brand</label>
+            <input class={field} type="text" id="brand" name="brand" required />
+          </div>
+          <div>
+            <label class={label} for="model">Model</label>
+            <input class={field} type="text" id="model" name="model" required />
+          </div>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2">
+          <div>
+            <label class={label} for="year">Year</label>
+            <input class={field} type="number" id="year" name="year" min="1950" max="2030" />
+          </div>
+          <div>
+            <label class={label} for="location">Location</label>
+            <input class={field} type="text" id="location" name="location" />
+          </div>
+        </div>
+
+        <div>
+          <label class={label} for="message">Anything else we should know?</label>
+          <textarea class={field} id="message" name="message" rows="4"></textarea>
+        </div>
+
+        <div>
+          <Button type="submit" variant="primary" block>Submit vehicle enquiry</Button>
+        </div>
+      </form>
+    </Container>
+  </section>
+</BaseLayout>

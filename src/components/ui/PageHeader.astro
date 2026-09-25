@@ -1,0 +1,20 @@
+---
+import Container from './Container.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+}
+
+const { eyebrow, title, intro } = Astro.props;
+---
+
+{/* pt clears the fixed header. */}
+<section class="border-b border-line bg-band pt-32 pb-16 lg:pt-44 lg:pb-24">
+  <Container>
+    {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
+    <h1 class="t-page max-w-3xl">{title}</h1>
+    {intro && <p class="mt-6 max-w-xl text-muted">{intro}</p>}
+  </Container>
+</section>

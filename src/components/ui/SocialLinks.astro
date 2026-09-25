@@ -1,0 +1,75 @@
+---
+import { contact } from '../../data/site';
+
+interface Props {
+  /** `sm` for footer columns, `md` for standalone rows. */
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { size = 'sm', class: className } = Astro.props;
+
+/**
+ * Circular outlined social buttons.
+ *
+ * Only channels Boston Motors has actually confirmed appear here. The
+ * reference design showed five (X, YouTube, Instagram, Facebook, Threads);
+ * a row of icons linking to accounts that do not exist would be worse than a
+ * short row, so this renders exactly what is real.
+ *
+ * WhatsApp here is the GROUP invite — product updates, a "follow" action,
+ * which is why it sits with social rather than with the enquiry channels.
+ */
+const channels = [
+  { label: 'Instagram', href: contact.instagram, icon: 'instagram' as const },
+  { label: 'WhatsApp updates', href: contact.whatsappGroup, icon: 'whatsapp' as const },
+].filter(
+  (channel): channel is { label: string; href: string; icon: 'instagram' | 'whatsapp' } =>
+    Boolean(channel.href),
+);
+
+const box = size === 'md' ? 'h-12 w-12' : 'h-10 w-10';
+const glyph = size === 'md' ? 'h-5 w-5' : 'h-4 w-4';
+---
+
+{
+  channels.length > 0 && (
+    <ul class:list={['flex flex-wrap items-center gap-3', className]}>
+      {channels.map((channel) => (
+        <li>
+          <a
+            href={channel.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={channel.label}
+            title={channel.label}
+            class:list={[
+              'flex items-center justify-center rounded-full border border-line text-muted transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-soft)] hover:scale-[1.08] hover:border-teal-light/50 hover:text-teal-light',
+              box,
+            ]}
+          >
+            {channel.icon === 'instagram' ? (
+              <svg class={glyph} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect
+                  x="2.5"
+                  y="2.5"
+                  width="19"
+                  height="19"
+                  rx="5.5"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="17.3" cy="6.7" r="1.2" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg class={glyph} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.38a9.86 9.86 0 0 0 4.74 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2Zm0 18.13h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.1.82.83-3.03-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.53 3.69-8.22 8.23-8.22a8.16 8.16 0 0 1 8.21 8.23c0 4.53-3.69 8.22-8.22 8.22Zm4.52-6.16c-.25-.12-1.46-.72-1.69-.8-.22-.09-.39-.13-.55.12s-.63.8-.78.97c-.14.16-.29.19-.53.06a6.71 6.71 0 0 1-1.99-1.23 7.4 7.4 0 0 1-1.37-1.71c-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.44.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42h-.47c-.16 0-.43.06-.66.31-.22.25-.86.85-.86 2.06s.89 2.39 1.01 2.55c.12.17 1.74 2.66 4.22 3.73.59.25 1.05.4 1.41.52.59.19 1.13.16 1.56.1.47-.07 1.46-.6 1.67-1.18.2-.57.2-1.07.14-1.17-.06-.1-.22-.16-.47-.29Z" />
+              </svg>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

@@ -1,0 +1,118 @@
+---
+import type { Location } from '../../data/locations';
+
+interface Props {
+  location: Location;
+  variant?: 'home' | 'contact';
+}
+
+const { location, variant = 'home' } = Astro.props;
+
+// This also prevents incomplete future locations from rendering as map cards.
+if (!location.address || !location.mapEmbedUrl) return;
+---
+
+<div
+  class:list={['view-on-map', `view-on-map--${variant}`]}
+  data-view-on-map
+  data-map-url={location.mapEmbedUrl}
+>
+  <div class="view-on-map__card">
+    <p class="eyebrow">{location.city}</p>
+    <p class="view-on-map__address">{location.address}</p>
+    {location.phone && <p class="view-on-map__phone">{location.phone}</p>}
+    <button
+      class="view-on-map__trigger"
+      type="button"
+      data-map-open
+      aria-expanded="false"
+      aria-label="View Boston Motors on map"
+    >
+      <span aria-hidden="true">◉</span>
+      <span>View on map</span>
+      <span class="view-on-map__arrow" aria-hidden="true">→</span>
+    </button>
+  </div>
+
+  <div class="view-on-map__panel" data-map-panel aria-hidden="true">
+    <div class="view-on-map__loading" data-map-loading>
+      <span class="view-on-map__spinner" aria-hidden="true"></span> Loading map…
+    </div>
+    <iframe
+      class="view-on-map__iframe"
+      data-map-frame
+      title="Boston Motors location"
+      loading="lazy"
+      allowfullscreen
+      referrerpolicy="strict-origin-when-cross-origin"
+    ></iframe>
+    <button class="view-on-map__close" type="button" data-map-close aria-label="Close map">×</button>
+  </div>
+</div>
+
+<style>
+  .view-on-map {
+    position: relative;
+    width: 100%;
+    height: 17.5rem;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-panel);
+    transition: height 620ms var(--ease-out-soft), border-color var(--duration-normal) var(--ease-out-soft), border-radius 620ms var(--ease-out-soft);
+  }
+  .view-on-map--contact { height: 20rem; }
+  /* Was bright cyan, which is a dark-theme value — on ivory it reads as a
+     highlighter line. Derived from the accent token instead, so it follows
+     whichever scope the card is dropped into. */
+  .view-on-map:hover { border-color: color-mix(in srgb, var(--color-teal-light) 45%, transparent); }
+  .view-on-map.is-open { height: clamp(18rem, 30vw, 28rem); border-color: color-mix(in srgb, var(--color-teal-light) 38%, transparent); border-radius: var(--radius-lg); }
+  .view-on-map--contact.is-open { height: clamp(20rem, 38vw, 34rem); }
+  .view-on-map__card, .view-on-map__panel { position: absolute; inset: 0; }
+  .view-on-map__card { display: flex; flex-direction: column; justify-content: center; padding: 2rem; transition: opacity 260ms var(--ease-out-soft), transform 420ms var(--ease-out-soft); }
+  .view-on-map__address { max-width: 32rem; margin-top: 1rem; color: var(--color-fg); font-family: var(--font-display); font-size: clamp(1.05rem, 1.8vw, 1.25rem); font-weight: 600; line-height: 1.45; }
+  .view-on-map__phone { margin-top: .5rem; color: var(--color-muted); font-size: .9375rem; }
+  .view-on-map__trigger { display: inline-flex; align-items: center; gap: .55rem; width: fit-content; min-height: 44px; margin-top: 1.35rem; border: 0; background: transparent; color: var(--color-teal-light); cursor: pointer; font-family: var(--font-display); font-size: .9375rem; font-weight: 700; }
+  .view-on-map__arrow { transition: transform var(--duration-fast) var(--ease-out-soft); }
+  .view-on-map__trigger:hover .view-on-map__arrow, .view-on-map__trigger:focus-visible .view-on-map__arrow { transform: translateX(4px); }
+  .view-on-map__panel { background: var(--color-band); opacity: 0; pointer-events: none; transform: scale(.985); transition: opacity 320ms var(--ease-out-soft) 130ms, transform 620ms var(--ease-out-soft); }
+  .view-on-map__iframe { display: block; width: 100%; height: 100%; border: 0; opacity: 0; transition: opacity 360ms var(--ease-out-soft); }
+  .view-on-map__loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: .7rem; color: var(--color-muted); font-size: .875rem; transition: opacity var(--duration-fast) var(--ease-out-soft); }
+  .view-on-map__spinner { width: .9rem; height: .9rem; border: 1px solid var(--color-line); border-top-color: var(--color-teal-light); border-radius: 999px; animation: bm-map-spin 800ms linear infinite; }
+  /* This one button stays dark in every scope, because what sits behind it is
+     neither the page nor the card — it is a Google Maps tile, which is always
+     light. `color: var(--color-fg)` was the bug: on the light site that
+     resolved to near-black glyph on a near-black pill. */
+  .view-on-map__close { position: absolute; top: 1rem; right: 1rem; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid rgba(244,247,247,.22); border-radius: 999px; background: rgba(3,8,9,.78); color: #f4f7f7; cursor: pointer; font-size: 1.5rem; line-height: 1; opacity: 0; transform: scale(.88); transition: background var(--duration-fast) var(--ease-out-soft), opacity 240ms var(--ease-out-soft) 220ms, transform 240ms var(--ease-out-soft) 220ms; }
+  .view-on-map__close:hover { background: rgba(12,32,36,.94); }
+  .view-on-map__close:active { transform: scale(.94); }
+  .view-on-map.is-open .view-on-map__card { opacity: 0; pointer-events: none; transform: scale(.98); }
+  .view-on-map.is-open .view-on-map__panel { opacity: 1; pointer-events: auto; transform: none; }
+  .view-on-map.is-open .view-on-map__close { opacity: 1; transform: none; }
+  .view-on-map.is-loaded .view-on-map__iframe { opacity: 1; }
+  .view-on-map.is-loaded .view-on-map__loading { opacity: 0; pointer-events: none; }
+  @keyframes bm-map-spin { to { transform: rotate(360deg); } }
+  @media (max-width: 640px) { .view-on-map, .view-on-map--contact { height: 17rem; } .view-on-map.is-open, .view-on-map--contact.is-open { height: min(76vw, 20rem); min-height: 17rem; } .view-on-map__card { padding: 1.5rem; } }
+  @media (prefers-reduced-motion: reduce) { .view-on-map, .view-on-map *, .view-on-map *::before, .view-on-map *::after { animation: none !important; transition-duration: .01ms !important; } }
+</style>
+
+<script>
+  for (const map of document.querySelectorAll<HTMLElement>('[data-view-on-map]')) {
+    const openButton = map.querySelector<HTMLButtonElement>('[data-map-open]')!;
+    const closeButton = map.querySelector<HTMLButtonElement>('[data-map-close]')!;
+    const panel = map.querySelector<HTMLElement>('[data-map-panel]')!;
+    const frame = map.querySelector<HTMLIFrameElement>('[data-map-frame]')!;
+    const close = () => { map.classList.remove('is-open'); panel.setAttribute('aria-hidden', 'true'); openButton.setAttribute('aria-expanded', 'false'); openButton.focus(); };
+    openButton.addEventListener('click', () => {
+      map.classList.add('is-open'); panel.setAttribute('aria-hidden', 'false'); openButton.setAttribute('aria-expanded', 'true');
+      if (!frame.dataset.loaded) {
+        frame.src = map.dataset.mapUrl!;
+        frame.dataset.loaded = 'true';
+      }
+      window.setTimeout(() => closeButton.focus(), 180);
+    });
+    closeButton.addEventListener('click', close);
+    frame.addEventListener('load', () => map.classList.add('is-loaded'), { once: true });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && map.classList.contains('is-open')) close(); });
+  }
+</script>

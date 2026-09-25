@@ -1,0 +1,317 @@
+---
+import { Image } from 'astro:assets';
+
+import bmwFamily from '../../assets/images/customers/delivery-bmw-family.jpg';
+import bmwHandshake from '../../assets/images/customers/delivery-bmw-handshake.jpg';
+import mercedesHandover from '../../assets/images/customers/delivery-mercedes-handover.jpg';
+import { reviewSummary, reviews } from '../../data/reviews';
+import Container from '../ui/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+/**
+ * Customer stories rail — the page's signature interaction.
+ *
+ * TWO BEHAVIOURS, ONE COMPONENT (deliberately not one shrunk into the other):
+ *
+ *   Desktop (lg+): a continuous right-to-left drift with a duplicated track for
+ *   a seamless loop, paused on hover or keyboard focus.
+ *
+ *   Below lg: a native scroll-snap rail. Real touch swipe, real keyboard
+ *   scrolling, one dominant card with the next peeking in. No autoplay —
+ *   autoplay that fights a user's own swipe is worse than none.
+ *
+ * WHY NO PER-CARD CENTRE SCALING: emphasising whichever card sits at the centre
+ * of a continuously moving track means measuring every card against the
+ * viewport on every frame — getBoundingClientRect inside a rAF loop, which is
+ * layout thrashing and the surest way to make this janky on a phone. The same
+ * sense of depth comes from edge masks that fade cards as they enter and leave,
+ * which costs nothing and never drops a frame.
+ *
+ * CONTENT RULE: nothing here is invented. Quotes come from the Google listing
+ * (see data/reviews.ts); the rest are real delivery photographs. Add reviews to
+ * that file and they flow into the rail automatically.
+ */
+const photos = [
+  { image: mercedesHandover, alt: 'A customer receiving the keys to a Mercedes-Benz' },
+  { image: bmwFamily, alt: 'A family collecting their new BMW' },
+  { image: bmwHandshake, alt: 'A handshake completing a BMW handover' },
+];
+
+type Story =
+  | { kind: 'review'; review: (typeof reviews)[number] }
+  | { kind: 'photo'; photo: (typeof photos)[number] };
+
+// Interleaved so the rail alternates evidence types rather than showing every
+// photograph and then every quote.
+const stories: Story[] = [];
+
+for (let index = 0; index < Math.max(reviews.length, photos.length); index += 1) {
+  const photo = photos[index];
+  const review = reviews[index];
+  if (photo) stories.push({ kind: 'photo', photo });
+  if (review) stories.push({ kind: 'review', review });
+}
+
+const initial = (name: string) => name.trim().charAt(0).toUpperCase();
+const total = String(stories.length).padStart(2, '0');
+---
+
+{/* Page ground, not `--color-band`. The cards are `--color-panel`, and panel
+    on band is only 3.5 L* of separation — on ivory the equivalent pair had 5.7
+    and these are meant to read as evidence sitting ON the page. Against the
+    ground it is 6.6, and the section loses a surface the dark theme did not
+    need. */}
+<section class="overflow-hidden py-section lg:py-section-lg">
+  <Container>
+    <SectionHeading eyebrow="Customer stories" title="Driven by trust." align="center">
+      <p class="mx-auto mt-5 max-w-md text-muted">
+        Every vehicle has a story. Every delivery begins with trust.
+      </p>
+
+      {
+        reviewSummary.count > 0 && (
+          <p class="mt-4">
+            <a
+              href={reviewSummary.url}
+              class="link-underline card-copy inline-flex items-center gap-2 hover:text-fg"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {reviewSummary.average
+                ? `${reviewSummary.average.toFixed(1)} from ${reviewSummary.count} Google reviews`
+                : `${reviewSummary.count} reviews on Google`}
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </p>
+        )
+      }
+    </SectionHeading>
+  </Container>
+
+  <div class="stories mt-14" data-stories>
+    <div class="stories-track" data-track>
+      {
+        [0, 1].map((copy) => (
+          <ul
+            class:list={['stories-set', copy === 1 && 'stories-dupe']}
+            aria-hidden={copy === 1 ? 'true' : undefined}
+          >
+            {stories.map((story, index) => (
+              <li
+                class="story-card"
+                data-story={copy === 0 ? '' : undefined}
+                data-index={copy === 0 ? String(index) : undefined}
+              >
+                {story.kind === 'photo' ? (
+                  <figure class="h-full overflow-hidden rounded-md border border-line bg-panel shadow-card">
+                    <Image
+                      src={story.photo.image}
+                      alt={copy === 1 ? '' : story.photo.alt}
+                      widths={[300, 420]}
+                      sizes="(min-width: 1024px) 26vw, 82vw"
+                      loading="lazy"
+                      class="h-full w-full object-cover"
+                    />
+                  </figure>
+                ) : (
+                  <blockquote class="flex h-full flex-col rounded-md border border-line bg-panel p-7 shadow-card lg:p-8">
+                    <div
+                      class="flex items-center gap-1"
+                      role="img"
+                      aria-label={`${story.review.rating} out of 5 stars`}
+                    >
+                      {Array.from({ length: 5 }).map((_, star) => (
+                        <svg
+                          viewBox="0 0 20 20"
+                          class:list={[
+                            'h-3.5 w-3.5',
+                            star < story.review.rating ? 'fill-teal-light' : 'fill-line',
+                          ]}
+                          aria-hidden="true"
+                        >
+                          <path d="M10 1.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8L1.5 7.7l5.9-.9z" />
+                        </svg>
+                      ))}
+                    </div>
+
+                    <p class="mt-5 flex-1 whitespace-pre-line text-fg">“{story.review.quote}”</p>
+
+                    <footer class="mt-6 flex items-center gap-3">
+                      <span
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-soft font-display text-xs font-semibold text-teal-light"
+                        aria-hidden="true"
+                      >
+                        {initial(story.review.name)}
+                      </span>
+                      <span>
+                        <span class="block font-display text-sm font-semibold text-fg">
+                          {story.review.name}
+                        </span>
+                        <span class="block text-[0.8125rem] text-muted">
+                          Google review{story.review.date ? ` · ${story.review.date}` : ''}
+                        </span>
+                      </span>
+                    </footer>
+                  </blockquote>
+                )}
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+
+  {/* Counter only where position means something — the desktop loop is
+      infinite, so a counter there would be fiction. */}
+  <Container>
+    <p class="mt-8 text-center font-display text-sm font-medium text-muted lg:hidden">
+      <span data-story-current>01</span> / {total}
+    </p>
+  </Container>
+</section>
+
+<style>
+  .stories {
+    /* Below lg this is a real scroll container: native swipe, native keyboard. */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .stories::-webkit-scrollbar {
+    display: none;
+  }
+
+  .stories-track {
+    display: flex;
+    width: max-content;
+  }
+
+  .stories-set {
+    display: flex;
+    /* Explicit, because the two card types depend on it. `stretch` is what
+       makes a photograph and a quote the same height without either one
+       declaring a height — the tallest quote in the set sets the rail, and the
+       images fill to match. Switching this to `center` or `flex-start` would
+       silently break the parity between the two evidence types. */
+    align-items: stretch;
+    gap: 1.25rem;
+    padding-inline: 1.25rem;
+  }
+
+  /* The duplicate exists only to close the desktop loop. */
+  .stories-dupe {
+    display: none;
+  }
+
+  .story-card {
+    flex: 0 0 auto;
+    width: 82vw;
+    max-width: 24rem;
+    scroll-snap-align: center;
+  }
+
+  @media (min-width: 1024px) {
+    .stories {
+      /* Hand control to the animation: no scrolling, no snapping. */
+      overflow-x: hidden;
+      scroll-snap-type: none;
+      /* Cards fade in and out at the edges instead of being cut off. */
+      mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    }
+
+    .stories-set {
+      gap: 1.5rem;
+      padding-inline: 0.75rem;
+    }
+
+    .stories-dupe {
+      display: flex;
+    }
+
+    .story-card {
+      width: 26vw;
+      max-width: 26rem;
+      transition:
+        transform var(--duration-normal) var(--ease-out-soft),
+        opacity var(--duration-normal) var(--ease-out-soft);
+    }
+
+    .stories-track {
+      animation: bm-stories 46s linear infinite;
+    }
+
+    /* Let people stop it and actually read a quote. */
+    .stories:hover .stories-track,
+    .stories:focus-within .stories-track {
+      animation-play-state: paused;
+    }
+
+    /* Everything recedes on hover; the card under the cursor comes forward. */
+    .stories:hover .story-card {
+      opacity: 0.55;
+    }
+
+    .stories .story-card:hover {
+      opacity: 1;
+      transform: translateY(-6px) scale(1.015);
+    }
+  }
+
+  @keyframes bm-stories {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    /* The track holds the set twice, so -50% is exactly one seamless cycle. */
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stories-track {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+
+  /* With the drift removed, the desktop rail must stay reachable by scrolling. */
+  @media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
+    .stories {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      mask-image: none;
+    }
+
+    .stories-dupe {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Only job: keep the mobile "01 / 05" counter honest. An IntersectionObserver
+  // fires on change rather than every frame, so there is no scroll handler and
+  // no layout measurement in a loop.
+  const rail = document.querySelector<HTMLElement>('[data-stories]');
+  const output = document.querySelector<HTMLElement>('[data-story-current]');
+
+  if (rail && output && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const index = Number((entry.target as HTMLElement).dataset.index ?? '0');
+          output.textContent = String(index + 1).padStart(2, '0');
+        }
+      },
+      { root: rail, threshold: 0.6 },
+    );
+
+    for (const card of rail.querySelectorAll<HTMLElement>('[data-story]')) {
+      observer.observe(card);
+    }
+  }
+</script>

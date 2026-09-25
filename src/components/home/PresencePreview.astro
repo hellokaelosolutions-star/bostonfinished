@@ -1,0 +1,28 @@
+---
+import { locations } from '../../data/locations';
+import Container from '../ui/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import ViewOnMap from '../ui/ViewOnMap.astro';
+
+// Incomplete locations never appear here: this section only represents a
+// confirmed showroom a visitor can actually reach.
+const verifiedLocations = locations.filter((location) => location.address && location.mapEmbedUrl);
+---
+
+{/* Continues TeamPreview's ivory. Previously both were pure white, which is
+    not "grouped" but "identical" — a 0.0 L* step between two sections reads as
+    a striping mistake, not a decision. Now the shared surface is the page's
+    own ground, so the pair reads as one continuous chapter. */}
+<section class="py-section lg:py-section-lg">
+  <Container>
+    <SectionHeading eyebrow="Our presence" title="Visit Boston Motors." align="center">
+      <p class="mx-auto mt-5 max-w-xl text-muted">
+        Come see the collection, meet the team and experience Boston Motors in person.
+      </p>
+    </SectionHeading>
+
+    <div class="mx-auto mt-14 max-w-3xl" data-reveal>
+      {verifiedLocations.map((location) => <ViewOnMap location={location} />)}
+    </div>
+  </Container>
+</section>

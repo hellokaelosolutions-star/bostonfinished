@@ -1,0 +1,51 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/uploads/cars"
+public_folder: "/uploads/cars"
+
+collections:
+  - name: "cars"
+    label: "Cars"
+    label_singular: "Car"
+    folder: "src/content/cars"
+    create: true
+    delete: true
+    slug: "{{fields.brand}}-{{fields.model}}"
+    extension: "json"
+    format: "json"
+    summary: "{{brand}} {{model}}"
+    fields:
+      - { label: "Brand", name: "brand", widget: "string" }
+      - { label: "Model", name: "model", widget: "string" }
+      - {
+          label: "Category",
+          name: "category",
+          widget: "string",
+          hint: "e.g. Performance · Coupé",
+        }
+      - { label: "Photo", name: "image", widget: "image" }
+      - { label: "Photo alt text", name: "alt", widget: "string" }
+      - { label: "Year", name: "year", widget: "number", value_type: "int", required: false }
+      - { label: "Price", name: "price", widget: "string", required: false }
+      - { label: "Fuel", name: "fuel", widget: "string", required: false }
+      - { label: "Transmission", name: "transmission", widget: "string", required: false }
+      - { label: "Mileage", name: "mileage", widget: "string", required: false }
+      - { label: "Engine", name: "engine", widget: "string", required: false }
+      - { label: "Location", name: "location", widget: "string", required: false }
+      - { label: "Description", name: "description", widget: "text", required: false }
+      - {
+          label: "Gallery",
+          name: "gallery",
+          widget: "list",
+          required: false,
+          field: { label: "Image", name: "image", widget: "image" },
+        }
+      - {
+          label: "Status",
+          name: "status",
+          widget: "select",
+          options: ["available", "sold"],
+          required: false,
+        }

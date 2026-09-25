@@ -1,0 +1,98 @@
+---
+import Container from '../components/ui/Container.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import TeamPortrait from '../components/ui/TeamPortrait.astro';
+import { team } from '../data/team';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/**
+ * Founder-led layout, gated on data rather than on a guess.
+ *
+ * Set `isFounder: true` on one person in `data/team.ts` and this page becomes
+ * a leadership page: a large feature block under a "Leadership" label, then
+ * the rest of the team under a "Team" label. That is the composition the
+ * investor narrative wants, and it is already built — it is waiting on one
+ * boolean and a set of job titles.
+ *
+ * Until Boston Motors confirms who leads the business, everyone is shown
+ * equally. Inventing a hierarchy between four real people is not a design
+ * decision we get to make, and a fabricated title is the one mistake on this
+ * page that would actively damage the investor case rather than just fail to
+ * help it.
+ */
+const founder = team.find((member) => member.isFounder);
+const others = founder ? team.filter((member) => member !== founder) : team;
+---
+
+<BaseLayout title="Team" description="The people behind Boston Motors.">
+  <PageHeader eyebrow="Our team" title="The people behind Boston Motors." />
+
+  {/* Tighter at the top than the standard `py-section`: the heading band above
+      already carries 6rem of its own bottom padding, and stacking a full
+      section's worth on top of it left the portraits floating a screen below
+      the title they belong to. The bottom stays generous — that space is the
+      run into the closing CTA. */}
+  <section class="pt-10 pb-16 lg:pt-14 lg:pb-24">
+    <Container>
+      {
+        founder && (
+          <div class="mb-16 lg:mb-24">
+            <p class="eyebrow mb-8" data-reveal>
+              Leadership
+            </p>
+
+            <div class="grid items-center gap-10 lg:grid-cols-[0.8fr_1fr] lg:gap-16">
+              <div data-reveal>
+                <TeamPortrait
+                  member={founder}
+                  widths={[400, 700, 1000]}
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  loading="eager"
+                  ratio="feature"
+                />
+              </div>
+
+              <div data-reveal style="--reveal-delay: 120ms">
+                <h2 class="font-display text-3xl font-semibold sm:text-4xl">{founder.name}</h2>
+                {founder.role && <p class="eyebrow mt-3">{founder.role}</p>}
+                {founder.bio && <p class="measure mt-6 text-muted">{founder.bio}</p>}
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        founder && (
+          <p class="eyebrow mb-8" data-reveal>
+            Team
+          </p>
+        )
+      }
+
+      <ul
+        class:list={[
+          'grid grid-cols-2 gap-5 lg:gap-6',
+          founder ? 'lg:grid-cols-3' : 'lg:grid-cols-4',
+        ]}
+      >
+        {
+          others.map((member, index) => (
+            <li data-reveal style={`--reveal-delay: ${index * 80}ms`}>
+              <TeamPortrait
+                member={member}
+                widths={[300, 500, 700]}
+                sizes="(min-width: 1024px) 23vw, 46vw"
+                loading={!founder && index < 2 ? 'eager' : 'lazy'}
+              />
+
+              <h2 class="mt-4 font-display text-lg font-semibold">{member.name}</h2>
+              {member.role && <p class="card-copy">{member.role}</p>}
+              {member.bio && <p class="mt-2 card-copy">{member.bio}</p>}
+            </li>
+          ))
+        }
+      </ul>
+    </Container>
+  </section>
+</BaseLayout>

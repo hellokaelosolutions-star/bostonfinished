@@ -1,0 +1,105 @@
+---
+import { Image } from 'astro:assets';
+
+import { brands } from '../../data/brands';
+
+/**
+ * "Selected Marques" — the marques that appear in the collection.
+ *
+ * This was briefly a dark-to-light transition band, ~150px tall, carrying a
+ * gradient that resolved the near-black hero into an ivory body. With the page
+ * dark throughout there is nothing to transition between, so it is back to what
+ * it should be: a seam, roughly 110px tall, between the hero and the story.
+ * If it starts feeling like a destination, it is too tall.
+ *
+ * ONE LOGO TREATMENT, and it is the dark one. The supplied PNGs are mixed
+ * polarity — Aston Martin and Mercedes are flat near-white (measured average
+ * brightness 244 and 228), the rest full-tone artwork averaging 92 to 171. On
+ * near-black the bright pair need no help; the dark end does, which is what the
+ * brightness lift is for. It only clips marks that are already flat white, so
+ * nothing loses detail it had. The `tone: 'flat-light'` flag in `brands.ts` is
+ * unused while the page is dark — it exists for the light case, where those two
+ * have to be inverted instead.
+ *
+ * NOT flattened to silhouettes: `brightness(0) invert(1)` would give every mark
+ * a uniform weight but turn the BMW roundel into a filled disc and the Porsche
+ * crest into a blob.
+ *
+ * NOT a partnership, authorisation or dealership claim, and it must never be
+ * captioned as one. See the note in `data/brands.ts`.
+ */
+
+// The visible "Selected marques" label is gone — the logos speak for
+// themselves, and a heading here would make it read as a section. `aria-label`
+// keeps it named for screen readers, so nothing is lost.
+---
+
+<section class="marques border-y border-line" aria-label="Selected marques">
+  <div
+    class="marquee group relative overflow-x-auto lg:overflow-hidden"
+    style="scrollbar-width: none"
+  >
+    <div class="marquee-track flex w-max items-center">
+      {
+        [0, 1].map((copy) => (
+          <ul
+            class:list={[
+              'flex shrink-0 items-center gap-9 px-5 sm:gap-12 sm:px-8',
+              // The second copy exists only to make the desktop loop seamless.
+              copy === 1 && 'hidden lg:flex',
+            ]}
+            aria-hidden={copy === 1 ? 'true' : undefined}
+          >
+            {brands.map((brand) => (
+              <li class="flex shrink-0 items-center justify-center">
+                <Image
+                  src={brand.image}
+                  alt={copy === 1 ? '' : brand.name}
+                  width={140}
+                  densities={[1, 2]}
+                  loading="lazy"
+                  class:list={[
+                    // Monochrome and held back, so thirteen different logos read
+                    // as one row; full colour and a slight lift on hover.
+                    'w-auto object-contain opacity-80 grayscale brightness-125 transition duration-[var(--duration-normal)] ease-[var(--ease-out-soft)] hover:scale-105 hover:opacity-100 hover:brightness-100 hover:grayscale-0',
+                    brand.shape === 'badge' ? 'max-h-8' : 'max-h-4 sm:max-h-5',
+                  ]}
+                />
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ~80px total with the 32px logo row. It measured 88px before and the height
+     was never really the problem — it sat on `--color-band`, and a FILLED band
+     reads as a section no matter how short it is. On the page ground between
+     two hairlines it reads as a separator, which is what it is. */
+  .marques {
+    padding-block: 1.5rem;
+  }
+
+  /* Hide the mobile scrollbar without disabling the scrolling itself. */
+  .marquee::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Animation is desktop-only; below lg the strip is simply scrollable. */
+  @media (max-width: 1023px) {
+    .marquee-track {
+      animation: none;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    /* A mask rather than two gradient overlays, so the fade does not have to be
+       kept in sync with whatever colour sits behind the strip. */
+    .marquee {
+      mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    }
+  }
+</style>

@@ -1,0 +1,138 @@
+---
+import Button from '../components/ui/Button.astro';
+import Container from '../components/ui/Container.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import ViewOnMap from '../components/ui/ViewOnMap.astro';
+import { locations } from '../data/locations';
+import { contact } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/**
+ * Enquiry types. "Investment enquiry" is deliberately omitted — only add it if
+ * Boston Motors confirms they want investment approaches through the site.
+ * Adding it purely to look investor-friendly would be exactly the kind of
+ * unearned signal this project has agreed to avoid.
+ */
+const enquiryTypes = [
+  'Buy a vehicle',
+  'Sell a vehicle',
+  'Service enquiry',
+  'Business enquiry',
+  'Partnership',
+  'General enquiry',
+];
+
+/**
+ * This page deliberately does NOT restate every channel.
+ *
+ * The footer already lists phone, email, WhatsApp, Instagram, address and
+ * hours on every page — including this one, directly below. Repeating that
+ * list in the sidebar made the page read as a template echoing itself.
+ *
+ * What belongs here instead is what the footer cannot give: the two immediate
+ * actions as real buttons, and the showroom you can actually walk into.
+ */
+const showroom = locations.find((location) => location.address && location.mapEmbedUrl);
+
+const field =
+  'mt-2 w-full rounded-md border border-line bg-panel px-4 py-3 text-fg placeholder:text-muted/60 transition-colors focus:border-teal-light focus:outline-none';
+const label = 'font-display text-sm font-medium text-fg';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Get in touch with Boston Motors about a vehicle, the business, or a partnership."
+>
+  {/* Not "Let's start a conversation" — the footer owns that line site-wide,
+       and it appeared twice on this page. This asks the page's actual question. */}
+  <PageHeader
+    eyebrow="Contact"
+    title="How can we help?"
+    intro="Tell us what you need and the right person will come back to you."
+  />
+
+  <section class="py-section lg:py-section-lg">
+    <Container>
+      <div class="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-20">
+        {/*
+          TODO (blocking before launch): this form has no destination yet.
+          The site is fully static, so it needs either a form service endpoint
+          (Formspree/Netlify/Vercel Forms) set as `action`, or an Astro server
+          action with an adapter added. Until then, submitting does nothing —
+          do not put this page in front of a customer.
+        */}
+        <form class="flex flex-col gap-6" data-reveal>
+          <div>
+            <label class={label} for="name">Name</label>
+            <input class={field} type="text" id="name" name="name" required autocomplete="name" />
+          </div>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div>
+              <label class={label} for="email">Email</label>
+              <input
+                class={field}
+                type="email"
+                id="email"
+                name="email"
+                required
+                autocomplete="email"
+              />
+            </div>
+
+            <div>
+              <label class={label} for="phone">Phone</label>
+              <input class={field} type="tel" id="phone" name="phone" autocomplete="tel" />
+            </div>
+          </div>
+
+          <div>
+            <label class={label} for="enquiry-type">What is this about?</label>
+            <select class={field} id="enquiry-type" name="enquiryType">
+              {enquiryTypes.map((type) => <option value={type}>{type}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label class={label} for="message">Message</label>
+            <textarea class={field} id="message" name="message" rows="5" required></textarea>
+          </div>
+
+          <div>
+            <Button type="submit" variant="primary" block>Send enquiry</Button>
+          </div>
+        </form>
+
+        <aside data-reveal>
+          <h2 class="eyebrow mb-5">Rather not write?</h2>
+
+          <div class="flex flex-col gap-3">
+            {
+              contact.phone && (
+                <Button href={contact.phoneHref} variant="secondary" block>
+                  Call {contact.phone}
+                </Button>
+              )
+            }
+            {
+              contact.whatsapp && (
+                <Button href={contact.whatsapp} variant="secondary" block>
+                  WhatsApp us
+                </Button>
+              )
+            }
+          </div>
+
+          {
+            showroom && (
+              <div class="mt-12">
+                <h2 class="eyebrow mb-5">Our location</h2>
+                <ViewOnMap location={showroom} variant="contact" />
+              </div>
+            )
+          }
+        </aside>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

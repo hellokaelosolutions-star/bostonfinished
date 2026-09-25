@@ -1,0 +1,98 @@
+---
+import { Image } from 'astro:assets';
+
+import backdrop from '../../assets/images/cars/car-porsche-911.webp';
+import Button from '../ui/Button.astro';
+import Container from '../ui/Container.astro';
+
+/**
+ * Full-width cinematic moment, not a card.
+ *
+ * This sits between "here is what we sell" and "here is why us", and its job is
+ * to turn the visitor from buyer to seller for one screen. Boxing it would put
+ * it on the same visual footing as the surrounding content and lose the pivot.
+ *
+ * DRAFT COPY — approve with Boston Motors before launch.
+ */
+---
+
+<section class="on-teal relative overflow-hidden bg-bg">
+  <div class="absolute inset-0">
+    <Image
+      src={backdrop}
+      alt=""
+      layout="full-width"
+      loading="lazy"
+      class="h-full w-full object-cover object-center"
+    />
+    {/* Heavy scrim: the photograph is atmosphere here, not the subject. */}
+    <div class="absolute inset-0 bg-bg/85"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-bg via-bg/60 to-bg"></div>
+  </div>
+
+  {/*
+    Seams.
+
+    This is the one dark island inside the light body, and both its edges were
+    razor cuts — the exit measured a +73.7 L* jump straight into ivory, the
+    largest unmanaged boundary on the page. The hero gets a whole transition
+    band to land on the light site; this section was dropped in and yanked out.
+
+    Each ramp starts at the EXACT colour of the neighbouring section and
+    dissolves into the teal, so the page dips into the interruption and rises
+    back out of it. Both sit inside the section's own vertical padding, so no
+    content is touched.
+
+    The two colours below are hard-coded because they belong to the sections
+    above and below, and `.on-teal` has already redefined every surface token
+    in this subtree. If FeaturedCars or WhyBoston changes surface, these change
+    with it — same coupling as the hero floor and the transition band.
+  */}
+  <div class="seam seam--top" aria-hidden="true"></div>
+  <div class="seam seam--bottom" aria-hidden="true"></div>
+
+  <Container class="relative py-20 text-center lg:py-28">
+    <p class="eyebrow" data-reveal>Have something special?</p>
+
+    <h2 class="t-section mx-auto mt-6 max-w-2xl" data-reveal style="--reveal-delay: 80ms">
+      Considering selling your luxury vehicle?
+    </h2>
+
+    <p class="mx-auto mt-6 max-w-md text-muted" data-reveal style="--reveal-delay: 160ms">
+      Tell us a little about it, and we will come back to you directly and discreetly.
+    </p>
+
+    <div class="mt-10 flex justify-center" data-reveal style="--reveal-delay: 240ms">
+      <Button href="/sell-your-car" variant="primary">Sell your vehicle</Button>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .seam {
+    position: absolute;
+    inset-inline: 0;
+    height: clamp(2.5rem, 6vw, 4.5rem);
+    pointer-events: none;
+  }
+
+  /*
+    The fade-out colour must repeat the fade-in colour's own RGB with zero
+    alpha. `transparent` is rgba(0,0,0,0), so interpolating to it drags every
+    stop toward black and leaves a dirty grey halo across the ramp — the exact
+    artefact these seams exist to remove.
+  */
+
+  /* Both neighbours are the page ground now, so one colour serves both edges.
+     The step is smaller than it was against ivory — 18.8 L* rather than 73.7 —
+     but a teal slab still butts straight into near-black without these. */
+  .seam--top {
+    top: 0;
+    background: linear-gradient(to bottom, #071014 0%, rgba(7, 16, 20, 0) 100%);
+  }
+
+  .seam--bottom {
+    bottom: 0;
+    background: linear-gradient(to top, #071014 0%, rgba(7, 16, 20, 0) 100%);
+  }
+</style>

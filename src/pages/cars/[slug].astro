@@ -1,0 +1,111 @@
+---
+import CarCard from '../../components/cars/CarCard.astro';
+import Button from '../../components/ui/Button.astro';
+import Container from '../../components/ui/Container.astro';
+import { getCars, type Car } from '../../lib/cars';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const cars = await getCars();
+  return cars.map((car) => ({
+    params: { slug: car.slug },
+    props: { car },
+  }));
+}
+
+interface Props {
+  car: Car;
+}
+
+const { car } = Astro.props;
+const cars = await getCars();
+
+const title = `${car.brand} ${car.model}`;
+
+// Only render rows Boston Motors has actually confirmed. With no inventory data
+// supplied yet this comes out empty, and the panel says so rather than showing
+// a table of dashes.
+const specs = [
+  { label: 'Year', value: car.year },
+  { label: 'Fuel', value: car.fuel },
+  { label: 'Transmission', value: car.transmission },
+  { label: 'Kilometres', value: car.mileage },
+  { label: 'Engine', value: car.engine },
+  { label: 'Location', value: car.location },
+].filter((spec) => Boolean(spec.value));
+
+const otherCars = cars.filter((other) => other.slug !== car.slug).slice(0, 3);
+---
+
+<BaseLayout
+  title={title}
+  description={`${title} — ${car.category}. Available through Boston Motors.`}
+>
+  <article class="pt-28 lg:pt-36">
+    <Container>
+      <a
+        href="/cars"
+        class="inline-flex items-center gap-2 font-display text-sm text-muted transition-colors hover:text-fg"
+      >
+        <span aria-hidden="true">&larr;</span> All vehicles
+      </a>
+
+      <div class="mt-8 overflow-hidden rounded-lg border border-line">
+        <img
+          src={car.image}
+          alt={car.alt}
+          loading="eager"
+          fetchpriority="high"
+          class="aspect-16/9 w-full object-cover"
+        />
+      </div>
+
+      <div class="mt-12 grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+        <div>
+          <p class="eyebrow mb-4">{car.category}</p>
+          <h1 class="text-[2.5rem] leading-[1.05] sm:text-5xl lg:text-6xl">{title}</h1>
+
+          {car.description && <p class="mt-6 max-w-xl text-muted">{car.description}</p>}
+
+          {car.price && <p class="mt-8 font-display text-2xl">{car.price}</p>}
+        </div>
+
+        <aside class="rounded-md border border-line bg-panel p-8">
+          <h2 class="font-display text-lg font-semibold">Specification</h2>
+
+          {
+            specs.length > 0 ? (
+              <dl class="mt-6 flex flex-col gap-4">
+                {specs.map((spec) => (
+                  <div class="flex justify-between gap-6 border-b border-line pb-3 text-[0.9375rem]">
+                    <dt class="text-muted">{spec.label}</dt>
+                    <dd class="text-right text-fg">{spec.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : (
+              <p class="mt-4 card-copy">
+                Full specification, pricing and availability for this vehicle are confirmed on
+                enquiry.
+              </p>
+            )
+          }
+
+          <div class="mt-8">
+            <Button href="/contact" variant="primary" class="w-full">Enquire about this car</Button>
+          </div>
+        </aside>
+      </div>
+    </Container>
+  </article>
+
+  <section class="py-section lg:py-section-lg">
+    <Container>
+      <h2 class="text-2xl sm:text-3xl">More from the collection</h2>
+
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {otherCars.map((other) => <CarCard car={other} />)}
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

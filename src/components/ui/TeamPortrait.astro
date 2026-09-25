@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+
+import type { TeamMember } from '../../data/team';
+
+interface Props {
+  member: TeamMember;
+  widths: number[];
+  sizes: string;
+  loading?: 'eager' | 'lazy';
+  /** The feature block runs larger and squarer than the supporting grid. */
+  ratio?: 'portrait' | 'feature';
+}
+
+const { member, widths, sizes, loading = 'lazy', ratio = 'portrait' } = Astro.props;
+
+/**
+ * One card for both the homepage preview and /team, so the two can never drift
+ * apart — they were duplicating this markup line for line.
+ *
+ * Two behaviours, driven by `member.kind`:
+ *
+ *   photo    — cropped `object-top`, because faces belong high in the frame.
+ *   monogram — centred and contained. The supplied tile is a self-contained
+ *              dark gradient graphic; top-aligning it cut the bottom off, and
+ *              a light photo frame around a dark tile is what made it read as
+ *              a broken portrait rather than a deliberate card.
+ */
+const isMonogram = member.kind === 'monogram';
+---
+
+<div
+  class:list={[
+    'team-frame overflow-hidden rounded-md border border-line',
+    'bg-panel',
+    ratio === 'feature' ? 'team-frame--feature' : 'team-frame--portrait',
+  ]}
+>
+  {/* A monogram carries no information the name rendered beneath it does not
+      already give, so it is decorative and takes an empty alt. A portrait
+      shows what a person looks like, which is information, so it gets one. */}
+  <Image
+    src={member.image}
+    alt={isMonogram ? '' : `${member.name}, Boston Motors`}
+    widths={widths}
+    sizes={sizes}
+    loading={loading}
+    class:list={[
+      'team-img h-full w-full',
+      isMonogram ? 'object-cover object-center' : 'object-cover object-top',
+    ]}
+  />
+</div>
+
+<style>
+  .team-frame--portrait {
+    aspect-ratio: 3 / 4;
+  }
+
+  .team-frame--feature {
+    aspect-ratio: 4 / 5;
+  }
+
+  /* Same hover language as the About media — a slow settle, nothing that
+     implies the card navigates somewhere. There is no per-person page, so no
+     arrow and no lift: an affordance that promises a destination it does not
+     have is worse than no affordance. */
+  .team-img {
+    transition: transform 900ms var(--ease-out-soft);
+  }
+
+  .team-frame:hover .team-img {
+    transform: scale(1.03);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .team-img {
+      transition: none;
+    }
+
+    .team-frame:hover .team-img {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,329 @@
+---
+import { Image } from 'astro:assets';
+
+import logo from '../../assets/images/logo-boston-motors.png';
+import { locations } from '../../data/locations';
+import { agency, contact, footerNav, legalEntity, legalLinks, site } from '../../data/site';
+import Button from '../ui/Button.astro';
+import Container from '../ui/Container.astro';
+import SocialLinks from '../ui/SocialLinks.astro';
+
+const year = new Date().getFullYear();
+
+/** Dead links are worse than missing ones — only render what has a destination. */
+const hasHref = (link: {
+  label: string;
+  href: string | null;
+}): link is { label: string; href: string } => Boolean(link.href);
+
+const company = footerNav.company.filter(hasHref);
+const automotive = footerNav.automotive.filter(hasHref);
+const legal = legalLinks.filter(hasHref);
+
+const showroom = locations.find((location) => location.address);
+
+/**
+ * The footer's CTA block is suppressed on pages that ARE the conversation —
+ * Contact and Sell Your Vehicle. Asking someone to "start a conversation"
+ * directly beneath the enquiry form they are already filling in reads as a
+ * template repeating itself, and it duplicated the page's own heading.
+ */
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isConversionPage = path === '/contact' || path === '/sell-your-car';
+
+const columns = [
+  { title: 'Company', links: company },
+  { title: 'Automotive', links: automotive },
+].filter((column) => column.links.length > 0);
+
+const linkClass = 'group inline-flex items-center gap-1.5 card-copy transition-colors hover:text-fg';
+---
+
+<footer id="site-footer" class="relative overflow-hidden bg-footer">
+  {/* ============ Final statement ============
+       Deliberately generous: this is the end of the site, not another band.
+       Hidden on Contact and Sell Your Vehicle — see `isConversionPage`.
+
+       It carries its own deep-teal ground rather than sharing the footer's
+       near-black, so the site closes on two dark tones instead of one long
+       slab: the brand colour makes the ask, then the floor drops beneath it
+       for the small print. `.on-teal` re-declares the tokens, so `bg-bg`
+       resolves to the brand teal inside this block. */}
+  {
+    !isConversionPage && (
+      <div class="on-teal bg-bg">
+        <Container class="py-20 lg:py-32">
+          <div class="max-w-2xl" data-reveal>
+            <h2 class="t-footer-cta">Let's start a conversation.</h2>
+
+            <p class="mt-6 max-w-md text-muted">
+              Looking for your next vehicle, or want to know more about Boston Motors?
+            </p>
+
+            <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+              {contact.whatsapp && (
+                <Button href={contact.whatsapp} variant="primary" block>
+                  WhatsApp us
+                  <span
+                    class="transition-transform duration-[var(--duration-fast)] group-hover:translate-x-1"
+                    aria-hidden="true"
+                  >
+                    &rarr;
+                  </span>
+                </Button>
+              )}
+              {contact.phone && (
+                <Button href={contact.phoneHref} variant="secondary" block>
+                  Call {contact.phone}
+                </Button>
+              )}
+            </div>
+          </div>
+        </Container>
+      </div>
+    )
+  }
+
+  {/* ============ Structural grid ============
+       Brand column is intentionally ~1.8x the link columns. Rules are dotted
+       hairlines that build the composition, not borders that box content. */}
+  {/* No rule here in either case. With the CTA present, the teal-to-near-black
+       colour change is already the divider and a dotted line on top of it reads
+       as a mistake. Without it the footer shares the page ground, and the
+       dotted rules inside the grid below give it all the structure it needs. */}
+  <div>
+    <Container>
+      <div class="lg:grid lg:grid-cols-[1.8fr_1fr_1fr_1.4fr]">
+        {/* Brand */}
+        <div class="py-12 lg:py-16 lg:pr-12" data-reveal>
+          <Image src={logo} alt={site.name} width={200} densities={[1, 2]} class="h-9 w-auto" />
+          <p class="mt-6 max-w-xs card-copy">{site.tagline}</p>
+        </div>
+
+        {/*
+          Link columns. Markup ships `open` so the footer is complete without
+          JS; an inline script below collapses them on small screens before
+          paint, so there is no flash of expanded content.
+        */}
+        {
+          columns.map((column, index) => (
+            <details
+              open
+              class="footer-accordion rule-t lg:rule-l lg:rule-t-none lg:py-16"
+              data-reveal
+              style={`--reveal-delay: ${(index + 1) * 80}ms`}
+            >
+              <summary class="flex cursor-pointer items-center justify-between py-5 lg:cursor-default lg:py-0 lg:pl-8">
+                <span class="eyebrow">{column.title}</span>
+                <span class="accordion-icon relative h-3 w-3 lg:hidden" aria-hidden="true">
+                  <span class="absolute top-1/2 left-0 h-px w-3 -translate-y-1/2 bg-muted" />
+                  <span class="accordion-bar absolute top-0 left-1/2 h-3 w-px -translate-x-1/2 bg-muted transition-transform duration-[var(--duration-normal)]" />
+                </span>
+              </summary>
+
+              <ul class="flex flex-col gap-3.5 pb-7 lg:mt-7 lg:pb-0 lg:pl-8">
+                {column.links.map((link) => (
+                  <li>
+                    <a href={link.href} class={linkClass}>
+                      {link.label}
+                      <span
+                        class="opacity-0 transition-all duration-[var(--duration-fast)] group-hover:translate-x-1 group-hover:opacity-100"
+                        aria-hidden="true"
+                      >
+                        &rarr;
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))
+        }
+
+        {/* Get in touch */}
+        <div
+          class="rule-t py-7 lg:rule-l lg:rule-t-none lg:py-16 lg:pl-8"
+          data-reveal
+          style="--reveal-delay: 240ms"
+        >
+          <h2 class="eyebrow mb-7">Get in touch</h2>
+
+          <ul class="flex flex-col gap-3.5">
+            {
+              contact.phone && (
+                <li>
+                  <a
+                    href={contact.phoneHref}
+                    class="font-display text-[0.9375rem] font-semibold text-fg transition-colors hover:text-teal-light"
+                  >
+                    {contact.phone}
+                  </a>
+                </li>
+              )
+            }
+            {
+              contact.email && (
+                <li>
+                  <a
+                    href={`mailto:${contact.email}`}
+                    class="card-copy transition-colors hover:text-fg"
+                  >
+                    {contact.email}
+                  </a>
+                </li>
+              )
+            }
+            {
+              contact.whatsapp && (
+                <li>
+                  <a
+                    href={contact.whatsapp}
+                    class="card-copy transition-colors hover:text-fg"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp us
+                  </a>
+                </li>
+              )
+            }
+            {
+              showroom &&
+                (showroom.mapUrl ? (
+                  <li>
+                    <a
+                      href={showroom.mapUrl}
+                      class="card-copy transition-colors hover:text-fg"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {showroom.city}, Kerala
+                    </a>
+                  </li>
+                ) : (
+                  <li class="card-copy">{showroom.city}, Kerala</li>
+                ))
+            }
+            {contact.hours && <li class="card-copy">{contact.hours}</li>}
+          </ul>
+
+          <SocialLinks class="mt-8" />
+        </div>
+      </div>
+    </Container>
+  </div>
+
+  {/* ============ Legal + agency ============ */}
+  <div class="rule-t">
+    <Container class="flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <p class="text-[0.8125rem] text-muted">© {year} {legalEntity}</p>
+        {
+          legal.map((link) => (
+            <a href={link.href} class="link-underline text-[0.8125rem] text-muted hover:text-fg">
+              {link.label}
+            </a>
+          ))
+        }
+      </div>
+
+      {/* Attribution, kept quiet and separate from the client's own line. */}
+      <p class="text-[0.8125rem] text-muted">
+        Built by{' '}
+        {
+          agency.url ? (
+            <a
+              href={agency.url}
+              class="group inline-flex items-center gap-1 text-fg transition-colors hover:text-teal-light"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {agency.name}
+              <span
+                class="transition-transform duration-[var(--duration-fast)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                aria-hidden="true"
+              >
+                &#8599;
+              </span>
+            </a>
+          ) : (
+            <span class="text-fg">{agency.name}</span>
+          )
+        }
+      </p>
+    </Container>
+  </div>
+
+  {/* ============ Watermark ============
+       Outlined, not filled — a hairline stroke with a transparent centre is
+       what gives the reference its character. Decorative only. */}
+  <div class="pointer-events-none relative pt-2 select-none" aria-hidden="true">
+    <p class="footer-wordmark text-center font-display font-extrabold whitespace-nowrap">
+      BOSTON MOTORS
+    </p>
+  </div>
+</footer>
+
+<script is:inline>
+  // Runs at parse time, before paint, so the accordions never flash open on
+  // mobile. Markup ships `open` so the footer is still complete without JS.
+  (function () {
+    var accordions = document.querySelectorAll('#site-footer .footer-accordion');
+    var desktop = window.matchMedia('(min-width: 1024px)');
+
+    function sync() {
+      for (var i = 0; i < accordions.length; i++) {
+        accordions[i].open = desktop.matches;
+      }
+    }
+
+    sync();
+    desktop.addEventListener('change', sync);
+  })();
+</script>
+
+<style>
+  /* Dotted structural hairlines — composition, not card outlines. */
+  .rule-t {
+    border-top: 1px dotted var(--color-line);
+  }
+
+  @media (min-width: 1024px) {
+    .lg\:rule-l {
+      border-left: 1px dotted var(--color-line);
+    }
+
+    .lg\:rule-t-none {
+      border-top: 0;
+    }
+  }
+
+  .footer-wordmark {
+    font-size: clamp(4rem, 19vw, 15rem);
+    line-height: 0.82;
+    letter-spacing: -0.045em;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(244, 247, 247, 0.11);
+  }
+
+  /* Remove the native disclosure triangle. */
+  .footer-accordion > summary {
+    list-style: none;
+  }
+
+  .footer-accordion > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Vertical bar of the "+" collapses when the section is open. */
+  .footer-accordion[open] .accordion-bar {
+    transform: translateX(-50%) scaleY(0);
+  }
+
+  @media (min-width: 1024px) {
+    /* Desktop: a plain column heading, never interactive. */
+    .footer-accordion > summary {
+      pointer-events: none;
+    }
+  }
+</style>

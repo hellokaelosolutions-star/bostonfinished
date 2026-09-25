@@ -1,0 +1,47 @@
+---
+import { team } from '../../data/team';
+import Button from '../ui/Button.astro';
+import Container from '../ui/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import TeamPortrait from '../ui/TeamPortrait.astro';
+
+/**
+ * The homepage preview stays deliberately thinner than /team: portraits, names
+ * and a way through. Roles and biographies belong on the page that exists to
+ * answer "who runs this business", not in a passing glance on the homepage.
+ */
+---
+
+{/* Back to the page ivory, and it stays ivory through PresencePreview below:
+    "here are the people, here is where to find them" is one chapter. The
+    boundary that carries meaning is the one above — leaving the Customer
+    Stories band — not one between these two. */}
+<section class="py-section lg:py-section-lg">
+  <Container>
+    <SectionHeading eyebrow="Our team" title="The people behind Boston Motors." />
+
+    {/* 2 columns on mobile, 4 on desktop. Source assets vary in ratio, so the
+         fixed 3:4 frame is what keeps the row even. Stagger is 0/80/160/240ms —
+         the same 80ms step every grid on the site uses. */}
+    <ul class="mt-14 grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-6">
+      {
+        team.map((member, index) => (
+          <li data-reveal style={`--reveal-delay: ${index * 80}ms`}>
+            <TeamPortrait
+              member={member}
+              widths={[300, 500, 700]}
+              sizes="(min-width: 1024px) 23vw, 46vw"
+            />
+
+            <h3 class="mt-4 font-display text-lg font-semibold">{member.name}</h3>
+            {member.role && <p class="card-copy">{member.role}</p>}
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-12" data-reveal>
+      <Button href="/team" variant="secondary">Meet the team</Button>
+    </div>
+  </Container>
+</section>

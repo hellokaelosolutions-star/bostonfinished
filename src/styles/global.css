@@ -1,0 +1,479 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Boston Motors — design tokens
+
+   DARK THEME. Near-black environment, deep Boston teal as the brand colour,
+   automotive photography carrying the weight. The cars are the light source;
+   everything around them recedes.
+
+   This is the third state of this file, and the reason it was cheap to get
+   here is worth keeping: every component styles itself through SEMANTIC tokens
+   (`bg-panel`, `text-muted`, `border-line`) and never through a literal colour.
+   Inverting the theme is therefore a change to this block, not a change to
+   forty components. Keep it that way — a hard-coded hex in a component is a
+   component that cannot follow the theme.
+
+   Dark needs LESS surface variation than light, not more. Three greys sitting
+   within 6 L* of each other read as banding on a near-black ground where the
+   same spacing on ivory read as layering. Prefer space and type scale over a
+   new surface; `--color-band` is the only lift that should appear often.
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Surfaces — warm ivory, not pure white. Three levels, used to GROUP rather
+     than to stripe. Never alternate on every section; that just draws
+     horizontal rules across the page. Consecutive sections sharing a surface
+     is the point: it makes them read as one chapter. A surface change should
+     always mean "a different kind of thing starts here".
+
+     Measured in CIE L*, so the steps are perceptual rather than hex-guesswork:
+
+       --color-band   94.3   recedes  — a soft ground for cards and rails
+       --color-bg     96.7   base     — the page itself
+       --color-panel 100.0   lifts    — product and card surfaces
+
+     `--color-band` was called `--color-bg-elevated`, which was true in the
+     dark theme (#0b181c sits above #071014) and became a lie on inversion:
+     #eaf0ef is DARKER than the page. A token whose name inverts its meaning
+     produces wrong decisions later, so it is named for its role instead. It
+     still resolves per scope — see the dark islands below. */
+  --color-bg: #071014;
+  --color-band: #0b181c;
+  --color-panel: #0c2024;
+  /* Kept as an alias so existing card surfaces resolve; prefer --color-panel. */
+  --color-surface: #0c2024;
+  /* The footer shares the page floor. The deep-teal CTA band directly above it
+     is what separates the two, so a third near-black would only add a seam. */
+  --color-footer: #071014;
+
+  /* Brand.
+     `--color-teal` is the deep brand colour used as a solid (button fills).
+     `--color-teal-light` is the ACCENT TEXT colour, and on near-black it is the
+     bright cyan: #19b8c6 measures 7.97:1 on #071014. The deep #0e6670 that the
+     light theme had to use for this role measures 2.88:1 here and would fail
+     every eyebrow, arrow and small label on the site — it is a fill colour in
+     this theme, never text. */
+  --color-teal: #0e6670;
+  --color-teal-light: #19b8c6;
+  --color-teal-soft: rgba(25, 184, 198, 0.14);
+  --color-accent: #19b8c6;
+  /* Foreground for content sitting ON the deep-teal brand fill. Stays light in
+     every scope, so a primary button is never dark-on-dark. */
+  --color-inverse: #f4f6f5;
+
+  /* Content */
+  --color-fg: #f4f7f7;
+  --color-muted: #8ea1a5;
+  /* A hairline, not a card outline. Visible when looked at, not before. */
+  --color-line: rgba(150, 200, 205, 0.18);
+
+  /* Dark surfaces separate by value and hairline, not by shadow — a drop
+     shadow on near-black is invisible at best and grey mud at worst. Kept as a
+     token so `shadow-card` utilities across the site resolve to nothing rather
+     than needing to be stripped out of every component. */
+  --shadow-card: none;
+
+  /* Type — Manrope for display/UI, Inter for reading */
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Vertical rhythm between major sections.
+     Tightened ~20% from the first pass — the page was reading sparse rather
+     than spacious. Premium is intentional space, not maximum space. */
+  --spacing-section: 5rem;
+  --spacing-section-lg: 7rem;
+
+  /* Four radii with real separation between them. A single value everywhere is
+     most of what makes a site read as an app dashboard rather than a brand. */
+  --radius-xs: 0.375rem; /* 6px  — chips, inputs, small elements */
+  --radius-sm: 0.5rem; /* 8px  — buttons */
+  --radius-md: 1rem; /* 16px — cards */
+  --radius-lg: 1.5rem; /* 24px — large editorial imagery */
+
+  /* Motion — felt, not noticed */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 200ms;
+  --duration-normal: 400ms;
+  --duration-slow: 650ms;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Anchor targets must clear the fixed header. */
+  :target {
+    scroll-margin-top: 7rem;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    /* Body sits at the top of the 1.3–1.5 range. It was 1.65, which is looser
+       than "airy" — at that leading the eye loses the line it is returning to. */
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    /* Negative tracking on headings only — never on body, where it costs
+       readability. */
+    letter-spacing: -0.02em;
+    /* Bottom of the 1.1–1.3 heading range. Was 1.08, i.e. below it. */
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* `--color-inverse`, not `--color-fg`: inside `.on-teal` the foreground is
+     redefined, and a selection highlight has to stay legible in both scopes. */
+  ::selection {
+    background-color: var(--color-teal);
+    color: var(--color-inverse);
+  }
+
+  /* One visible focus style everywhere — never remove it. */
+  :focus-visible {
+    outline: 2px solid var(--color-teal-light);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The teal island.
+
+   The page is near-black; the two conversion moments — Sell Your Vehicle and
+   the closing CTA — are deep brand teal. That is the only surface scope left.
+
+   `.on-dark` used to live here too, back when the page was ivory and three
+   things had to be forced dark. Every value it set is now the base theme, so
+   it has been removed rather than left as a no-op class that looks meaningful
+   and does nothing.
+
+   This scope REDEFINES the semantic tokens rather than introducing a second
+   set of utility classes. `text-fg`, `text-muted`, `border-line`, `bg-panel`
+   and every gradient referencing `--color-bg` keep working unchanged — they
+   simply resolve to teal inside it.
+   --------------------------------------------------------------------------- */
+@layer components {
+  /* Deep brand teal: the interruption sections. */
+  .on-teal {
+    --color-fg: #f4f7f7;
+    --color-line: rgba(150, 200, 205, 0.18);
+    --color-teal-light: #19b8c6;
+    --color-teal-soft: rgba(25, 184, 198, 0.14);
+    --shadow-card: none;
+    color: var(--color-fg);
+    --color-bg: #0b3d43;
+    --color-band: #0e4a52;
+    --color-panel: #12545d;
+    --color-surface: #12545d;
+    /* Lifted from the base #8ea1a5, which measures 4.42:1 on this teal —
+       marginally under AA. #96a9ad reaches 4.86:1. The page ground keeps the
+       darker value, where it already passes comfortably at 7.13:1. */
+    --color-muted: #96a9ad;
+    /* The primary button pair inverts here, and it has to.
+       `bg-teal text-inverse` on a teal ground is a teal button on teal: legible
+       on paper, but it reads as a panel rather than the one thing to press.
+       Swapping the two inside this scope makes it an ivory fill with deep-teal
+       text — the brightest element on the band — and every existing primary
+       button follows without needing a variant. Hover keeps working too: it
+       goes to `bg-teal-light`, which is the bright cyan in this scope. */
+    --color-teal: #f4f7f7;
+    --color-inverse: #0b3d43;
+  }
+
+  /* --- The fixed header ---------------------------------------------------
+     Far simpler than it needed to be under the light theme, where one fixed
+     header had to serve a dark hero and an ivory body during a single scroll —
+     that needed server-rendered state attributes, a cross-fading pseudo-element
+     and a scroll threshold measured off the transition band. None of it applies
+     now: the page is dark from top to bottom.
+
+     What survives is the part that was never about theming. Over the hero the
+     header sits on a PHOTOGRAPH, and measured against the actual hero image the
+     scrim alone left nav links at 2.7:1 — the top of the frame is where the sky
+     and the roofline reflections are. This gradient travels with the header, so
+     contrast never depends on which photograph is behind it. It fades out once
+     the page scrolls and the solid backdrop takes over. */
+  #site-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(7, 16, 20, 0.85) 0%,
+      rgba(7, 16, 20, 0.55) 58%,
+      rgba(7, 16, 20, 0) 100%
+    );
+    transition: opacity var(--duration-normal) var(--ease-out-soft);
+  }
+
+  #site-header[data-scrolled='false']::before {
+    opacity: 1;
+  }
+
+  /* Nav links sit on a photograph rather than a flat panel, so muted is lifted
+     above its page value. Harmless on the inner pages, where the header rests
+     on `--color-band` and this simply reads a little brighter. */
+  #site-header[data-scrolled='false'] {
+    --color-muted: #b3c4c7;
+  }
+}
+
+@layer components {
+  /* Section eyebrow: small, spaced, teal. The only place raw teal text appears. */
+  /* 13px, not 12px. Uppercase + heavy tracking already costs legibility;
+     shrinking it as well is how eyebrows end up looking like 9px on a phone. */
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-teal-light);
+  }
+
+  /* Supporting copy inside cards. Deliberately 15px rather than Tailwind's
+     14px `text-sm` — this is the size that was reading too small on mobile. */
+  .card-copy {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  /* Measure guard: ~65–70 characters. The Baymard range is 50–75; anything
+     wider and the eye loses its place on the return sweep. Apply to any
+     paragraph that would otherwise inherit a full container's width. */
+  .measure {
+    max-width: 68ch;
+  }
+
+  /* --- Type scale -------------------------------------------------------
+     Contrast is the point. One very large statement per screen, everything
+     else deliberately small. If two things are both big, neither is. */
+  /* 44px mobile → ~58px tablet → 88px desktop. The 7.5vw middle term is what
+     keeps the tablet range from sagging below ~56px at 768px. */
+  .t-hero {
+    font-size: clamp(2.75rem, 7.5vw, 5.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .t-page {
+    font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.028em;
+  }
+
+  .t-section {
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+  }
+
+  .t-card {
+    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  /* Footer CTA: 32px on mobile up to 68px on desktop. The final statement of
+     the site, so it outranks a section heading but not the hero. */
+  .t-footer-cta {
+    font-size: clamp(2rem, 5vw, 4.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.028em;
+  }
+
+  /* Text hover: underline grows from the left. */
+  .link-underline {
+    position: relative;
+  }
+
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 0;
+    background-color: currentColor;
+    transition: width var(--duration-normal) var(--ease-out-soft);
+  }
+
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal — opacity 0→1, translateY 16px→0.
+   Elements are only hidden once JS has confirmed it can observe them, so the
+   page stays fully readable if JS fails or is disabled.
+   --------------------------------------------------------------------------- */
+@layer utilities {
+  [data-reveal] {
+    opacity: 1;
+  }
+
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity var(--duration-slow) var(--ease-out-soft),
+      transform var(--duration-slow) var(--ease-out-soft);
+    /* Set --reveal-delay on siblings to stagger a row of cards. */
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  /* Directional variant: text blocks beside an editorial image slide in from
+     the side rather than up, so the pair reads as one composition. Declared
+     after the base rule — same specificity, so source order decides. */
+  html.js [data-reveal='x'] {
+    transform: translateX(30px);
+  }
+
+  html.js [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Editorial image reveal — the featured vehicle. Slower and scale-based
+     rather than a slide, so the photograph settles instead of sliding in.
+     This is the page's one deliberate "moment"; do not reuse it everywhere. */
+  [data-reveal-media] {
+    opacity: 1;
+  }
+
+  html.js [data-reveal-media] {
+    opacity: 0;
+    transform: scale(1.05);
+    transition:
+      opacity 900ms var(--ease-out-soft),
+      transform 1100ms var(--ease-out-soft);
+  }
+
+  html.js [data-reveal-media].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Animation system. Six behaviours, no more:
+   1. hero entrance  2. scroll reveal  3. image hover  4. card hover
+   5. marquee (Selected Marques)  6. timeline progress (Journey — not built yet,
+      it is content-gated)
+   Stillness between them is the point. Do not add a seventh.
+   --------------------------------------------------------------------------- */
+@keyframes bm-hero-media {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes bm-marquee {
+  from {
+    transform: translateX(0);
+  }
+  /* Track holds the logo row twice, so -50% is one seamless cycle. */
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@layer utilities {
+  /* Whole entrance lands in ~900ms. Long enough to feel like the page came
+     alive, short enough that nobody is waiting for it to finish. */
+  html.js [data-hero-media] {
+    animation: bm-hero-media 900ms var(--ease-out-soft) both;
+  }
+
+  html.js [data-hero-item] {
+    animation: bm-rise 520ms var(--ease-out-soft) both;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  .marquee-track {
+    animation: bm-marquee 80s linear infinite;
+  }
+
+  /* Give people a way to stop it and read a logo. */
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html.js [data-reveal],
+  html.js [data-reveal].is-revealed,
+  html.js [data-reveal-media],
+  html.js [data-reveal-media].is-revealed {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* The blanket rule above would run the marquee once, instantly, and leave the
+     track parked at -50%. It has to be removed outright, not accelerated. */
+  .marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Hero entrance uses `both` fill, so cancelling it lands on the final state. */
+  html.js [data-hero-media],
+  html.js [data-hero-item] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

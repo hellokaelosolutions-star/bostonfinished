@@ -1,0 +1,55 @@
+---
+import BusinessPreview from '../components/home/BusinessPreview.astro';
+import CustomerStories from '../components/home/CustomerStories.astro';
+import FeaturedCars from '../components/home/FeaturedCars.astro';
+import Hero from '../components/home/Hero.astro';
+import Marques from '../components/home/Marques.astro';
+import PresencePreview from '../components/home/PresencePreview.astro';
+import SellVehicleCTA from '../components/home/SellVehicleCTA.astro';
+import TeamPreview from '../components/home/TeamPreview.astro';
+import WhyBoston from '../components/home/WhyBoston.astro';
+import HowBuyingWorks from '../components/ui/HowBuyingWorks.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/**
+ * Homepage running order.
+ *
+ * Luxury → Trust → Business → Growth. The visitor meets the brand, sees the
+ * marques, learns what the company is, what it does, what it sells, how to sell
+ * to it, why it is worth choosing, who has already chosen it, where it operates
+ * and who runs it — then acts.
+ *
+ * The page is near-black throughout, interrupted twice in deep brand teal:
+ * Sell Your Vehicle mid-page, and the closing CTA above the footer. Those two
+ * are the only surface changes that carry meaning, so nothing else should
+ * introduce one — on a dark ground a third surface reads as banding rather
+ * than as structure.
+ *
+ * Three sections from the agreed order are intentionally NOT here, because the
+ * content they depend on does not exist yet:
+ *
+ *   · Trust strip — needs real customer/vehicle counts
+ *   · Journey     — needs founding date and dated milestones
+ *   · Vision      — needs the actual vision statement
+ *
+ * Journey and Vision slot in between Presence/Team and the Final CTA; the trust
+ * strip sits directly under the Hero. Do not add them with placeholder numbers
+ * or invented milestones — see CONTENT-REQUIRED.md.
+ */
+---
+
+<BaseLayout
+  title="Boston Motors"
+  description="Boston Motors — premium pre-owned automobiles, built around trust, quality and confidence."
+>
+  <Hero />
+  <Marques />
+  <HowBuyingWorks eyebrow="Buying a car" />
+  <BusinessPreview />
+  <FeaturedCars />
+  <SellVehicleCTA />
+  <WhyBoston />
+  <CustomerStories />
+  <TeamPreview />
+  <PresencePreview />
+</BaseLayout>

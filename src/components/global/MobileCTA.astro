@@ -1,0 +1,58 @@
+---
+import { contact } from '../../data/site';
+
+/**
+ * Sticky mobile action bar.
+ *
+ * Renders NOTHING until Boston Motors supplies a real WhatsApp number — a
+ * sticky bar that goes nowhere is worse than no bar at all.
+ *
+ * It also retracts once the footer is on screen: the footer carries the same
+ * WhatsApp and Call actions at full size, and two competing sets of contact
+ * buttons on one screen makes both look accidental.
+ */
+const hasWhatsApp = Boolean(contact.whatsapp);
+---
+
+{
+  hasWhatsApp && (
+    <div
+      id="mobile-cta"
+      class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/95 backdrop-blur-md transition-transform duration-[var(--duration-normal)] ease-[var(--ease-out-soft)] lg:hidden"
+    >
+      <div class="grid grid-cols-2 gap-3 px-4 py-3">
+        <a
+          href={contact.whatsapp!}
+          class="inline-flex min-h-11 items-center justify-center rounded-sm border border-line font-display text-sm font-semibold text-fg"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp
+        </a>
+        <a
+          href="/contact"
+          class="inline-flex min-h-11 items-center justify-center rounded-sm bg-teal font-display text-sm font-semibold text-inverse"
+        >
+          Enquire
+        </a>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  const bar = document.getElementById('mobile-cta');
+  const footer = document.getElementById('site-footer');
+
+  if (bar && footer && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Slide out of view rather than unmounting, so it returns on scroll up.
+        bar.style.transform = entry?.isIntersecting ? 'translateY(100%)' : '';
+      },
+      { threshold: 0 },
+    );
+
+    observer.observe(footer);
+  }
+</script>

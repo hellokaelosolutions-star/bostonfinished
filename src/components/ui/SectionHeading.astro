@@ -1,0 +1,29 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  /** Renders as <h1> on the page's primary heading, <h2> everywhere else. */
+  as?: 'h1' | 'h2' | 'h3';
+  align?: 'left' | 'center';
+  class?: string;
+}
+
+const { eyebrow, title, as: Tag = 'h2', align = 'left', class: className = '' } = Astro.props;
+
+// One statement per screen. h2 is the section voice; h3 is deliberately much
+// smaller so the two never compete.
+const sizes = {
+  h1: 't-page',
+  h2: 't-section',
+  h3: 't-card',
+};
+---
+
+<div
+  class:list={[align === 'center' && 'text-center mx-auto max-w-2xl', className]}
+  data-reveal
+>
+  {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
+  <Tag class:list={[sizes[Tag], 'text-fg']} set:html={title} />
+  <slot />
+</div>

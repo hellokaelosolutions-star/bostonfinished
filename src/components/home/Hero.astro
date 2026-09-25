@@ -1,0 +1,137 @@
+---
+import { Image } from 'astro:assets';
+
+import heroBg from '../../assets/images/hero/hero-bg.jpg';
+import { locations } from '../../data/locations';
+import Button from '../ui/Button.astro';
+import Container from '../ui/Container.astro';
+
+/**
+ * The cinematic opening.
+ *
+ * The scrim floor lands on #071014, which is also the page ground, so the hero
+ * dissolves into the section beneath it with no visible edge. That is the only
+ * coupling left here: if `--color-bg` moves, this value moves with it.
+ *
+ * No scope class: the page itself is dark, so `text-muted`, `border-line` and
+ * `.eyebrow` already resolve correctly here.
+ */
+
+// Only cities with a confirmed address. Delhi sits in the data with no address,
+// phone or map, and the hero eyebrow is the most prominent line on the site —
+// it must not assert a second showroom nothing supplied evidences. Fill in the
+// Delhi address in data/locations.ts and it returns here automatically.
+const reach = locations
+  .filter((location) => location.address)
+  .map((location) => location.city)
+  .join(' · ');
+---
+
+<section class="hero relative flex items-end overflow-hidden lg:items-center">
+  {/* Atmosphere, not information — the headline says what this is, so a
+      descriptive alt would only announce the same thing twice. */}
+  <div class="absolute inset-0" data-hero-media>
+    <Image
+      src={heroBg}
+      alt=""
+      layout="full-width"
+      loading="eager"
+      fetchpriority="high"
+      class="h-full w-full object-cover object-center"
+    />
+    <div class="hero-scrim absolute inset-0"></div>
+  </div>
+
+  <Container class="relative pt-32 pb-16 lg:pb-24">
+    <div class="max-w-2xl">
+      {/* Entrance runs eyebrow → heading → copy → buttons, landing at ~900ms. */}
+      <p class="eyebrow" data-hero-item style="--delay: 120ms">{reach}</p>
+
+      <h1 class="t-hero mt-5" data-hero-item style="--delay: 220ms">
+        Where luxury<br />meets legacy.
+      </h1>
+
+      <p class="mt-7 max-w-md text-lg text-muted" data-hero-item style="--delay: 320ms">
+        Premium pre-owned automobiles, built around trust, quality and confidence.
+      </p>
+
+      <div
+        class="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4"
+        data-hero-item
+        style="--delay: 400ms"
+      >
+        <Button href="/cars" variant="primary" block>Explore collection</Button>
+        <Button href="/about" variant="secondary" block>Discover Boston Motors</Button>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  /* `svh` so mobile browser chrome cannot push the buttons below the fold;
+     `vh` first as the fallback for anything that does not understand it. */
+  .hero {
+    min-height: 88vh;
+    min-height: 88svh;
+    /* Lifted above the page value for the same reason the header is: this copy
+       sits on a photograph, not a flat panel. Measured against the actual hero
+       image, #8ea1a5 came out at 4.0:1 here — under AA for 18px text, which is
+       not large text by WCAG. #b3c4c7 clears it. */
+    --color-muted: #b3c4c7;
+  }
+
+  /*
+    Scrims. Four jobs, and each needs its own layer:
+
+      floor  — lands on the page ground so the hero has no bottom edge
+      crown  — keeps the fixed header legible over a bright sky or reflection
+      wedge  — guarantees contrast behind the type, wherever it sits
+      cast   — a low teal glow so the dark reads as brand, not as flat black
+
+    Layer order is top-to-bottom, so the floor is listed first: it has to win
+    at the bottom edge no matter what the others are doing.
+  */
+  .hero-scrim {
+    background:
+      /* Mobile puts the type in the bottom third, so the wedge runs upward and
+         is heaviest exactly where the words are. */
+      linear-gradient(
+        to top,
+        #071014 0%,
+        rgba(7, 16, 20, 0.95) 22%,
+        rgba(7, 16, 20, 0.82) 44%,
+        rgba(7, 16, 20, 0.48) 68%,
+        rgba(7, 16, 20, 0.2) 100%
+      ),
+      linear-gradient(to bottom, rgba(7, 16, 20, 0.66) 0%, rgba(7, 16, 20, 0) 24%);
+  }
+
+  @media (min-width: 1024px) {
+    .hero-scrim {
+      background:
+        linear-gradient(to top, #071014 0%, rgba(7, 16, 20, 0.6) 10%, rgba(7, 16, 20, 0) 30%),
+        linear-gradient(to bottom, rgba(7, 16, 20, 0.62) 0%, rgba(7, 16, 20, 0) 22%),
+        /* Type moves left on desktop, so the wedge turns with it and the car
+           keeps the right half of the frame to itself.
+           The text column runs to roughly 54% of the viewport (a 42rem block
+           inside a 1240px container), so the wedge has to still be carrying
+           real weight there — at the first pass it had fallen to 0.55 by 58%
+           and the eyebrow measured 4.49:1, a rounding error away from failing.
+           It now holds 0.72 through 58% and only opens up past the type. */
+        linear-gradient(
+          to right,
+          rgba(7, 16, 20, 0.94) 0%,
+          rgba(7, 16, 20, 0.9) 38%,
+          rgba(7, 16, 20, 0.72) 58%,
+          rgba(7, 16, 20, 0.3) 80%,
+          rgba(7, 16, 20, 0) 100%
+        ),
+        radial-gradient(115% 85% at 6% 82%, rgba(11, 61, 67, 0.5), rgba(11, 61, 67, 0) 62%);
+    }
+
+    .hero {
+      min-height: 92vh;
+      min-height: 92svh;
+    }
+  }
+</style>

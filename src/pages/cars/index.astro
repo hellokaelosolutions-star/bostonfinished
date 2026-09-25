@@ -1,0 +1,39 @@
+---
+import CarCard from '../../components/cars/CarCard.astro';
+import SellVehicleCTA from '../../components/home/SellVehicleCTA.astro';
+import Container from '../../components/ui/Container.astro';
+import PageHeader from '../../components/ui/PageHeader.astro';
+import { getCars } from '../../lib/cars';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const cars = await getCars();
+---
+
+<BaseLayout
+  title="Cars"
+  description="The current Boston Motors collection of premium pre-owned vehicles."
+>
+  <PageHeader
+    eyebrow="The collection"
+    title="Currently on the floor."
+    intro="Availability changes often. Enquire about any vehicle and we will confirm its current status."
+  />
+
+  <section class="py-section lg:py-section-lg">
+    <Container>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          cars.map((car, index) => (
+            <CarCard
+              car={car}
+              loading={index < 3 ? 'eager' : 'lazy'}
+              revealDelay={(index % 3) * 90}
+            />
+          ))
+        }
+      </div>
+    </Container>
+  </section>
+
+  <SellVehicleCTA />
+</BaseLayout>
