@@ -71,9 +71,8 @@ const isActive = (href: string) =>
   </Container>
 
   {/*
-    Mobile panel. Not a shrunken desktop nav: numbered index, large targets,
-    and the secondary journeys (sell / social) pushed below a rule.
-    Revealed with clip-path so the panel wipes down rather than fading.
+    Mobile panel. Not a shrunken desktop nav: large targets, with the secondary
+    journeys (sell / phone / social) pushed below a rule.
   */}
   <div
     id="mobile-nav"
@@ -88,19 +87,12 @@ const isActive = (href: string) =>
               <a
                 href={link.href}
                 aria-current={isActive(link.href) ? 'page' : undefined}
-                class="flex items-baseline gap-5 py-3.5"
+                class:list={[
+                  'block border-b border-line py-4 font-display text-2xl font-semibold tracking-tight',
+                  isActive(link.href) ? 'text-teal-light' : 'text-fg',
+                ]}
               >
-                <span class="font-display text-[0.6875rem] font-semibold tracking-[0.2em] text-teal-light">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <span
-                  class:list={[
-                    'font-display text-[2rem] font-semibold tracking-tight',
-                    isActive(link.href) ? 'text-teal-light' : 'text-fg',
-                  ]}
-                >
-                  {link.label}
-                </span>
+                {link.label}
               </a>
             </li>
           ))
@@ -108,7 +100,7 @@ const isActive = (href: string) =>
       </ul>
 
       <div
-        class="mt-8 border-t border-line pt-8"
+        class="mt-10"
         data-nav-item
         style={`--nav-delay: ${120 + navLinks.length * 55}ms`}
       >
@@ -188,8 +180,7 @@ const isActive = (href: string) =>
     function applyScrollState() {
       var scrolled = window.scrollY > 24;
       header.dataset.scrolled = String(scrolled);
-      header.classList.toggle('bg-bg/90', scrolled);
-      header.classList.toggle('backdrop-blur-md', scrolled);
+      header.classList.toggle('bg-bg', scrolled);
       header.classList.toggle('border-b', scrolled);
       header.classList.toggle('border-line', scrolled);
     }

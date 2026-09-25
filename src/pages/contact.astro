@@ -35,7 +35,7 @@ const enquiryTypes = [
 const showroom = locations.find((location) => location.address && location.mapEmbedUrl);
 
 const field =
-  'mt-2 w-full rounded-md border border-line bg-panel px-4 py-3 text-fg placeholder:text-muted/60 transition-colors focus:border-teal-light focus:outline-none';
+  'mt-2 w-full rounded-sm border border-line bg-panel px-4 py-3 text-fg placeholder:text-muted/60 transition-colors focus:border-teal-light focus:outline-none';
 const label = 'font-display text-sm font-medium text-fg';
 ---
 
@@ -61,7 +61,7 @@ const label = 'font-display text-sm font-medium text-fg';
           action with an adapter added. Until then, submitting does nothing —
           do not put this page in front of a customer.
         */}
-        <form class="flex flex-col gap-6" data-reveal>
+        <form class="flex flex-col gap-6">
           <div>
             <label class={label} for="name">Name</label>
             <input class={field} type="text" id="name" name="name" required autocomplete="name" />
@@ -103,7 +103,7 @@ const label = 'font-display text-sm font-medium text-fg';
           </div>
         </form>
 
-        <aside data-reveal>
+        <aside>
           <h2 class="eyebrow mb-5">Rather not write?</h2>
 
           <div class="flex flex-col gap-3">

@@ -21,14 +21,10 @@ const cars = await getCars();
 
   <section class="py-section lg:py-section-lg">
     <Container>
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {
           cars.map((car, index) => (
-            <CarCard
-              car={car}
-              loading={index < 3 ? 'eager' : 'lazy'}
-              revealDelay={(index % 3) * 90}
-            />
+            <CarCard car={car} loading={index < 3 ? 'eager' : 'lazy'} />
           ))
         }
       </div>

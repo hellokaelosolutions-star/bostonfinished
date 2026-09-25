@@ -64,7 +64,6 @@ public/                Public files such as the favicon
 Most text and repeated content is kept in typed data files:
 
 - `src/data/site.ts` - Business name, contact information, social links, and global details
-- `src/data/cars.ts` - Vehicle inventory and vehicle details
 - `src/data/services.ts` - The three business services and their images
 - `src/data/brands.ts` - Vehicle marques
 - `src/data/locations.ts` - Locations and map information
@@ -74,19 +73,13 @@ Most text and repeated content is kept in typed data files:
 
 Images belong in the matching folder under `src/assets/images/`. Astro optimizes imported images during the build.
 
-## Business Carousel
+## Editing Cars
 
-The homepage business section is implemented in `src/components/home/BusinessPreview.astro`.
+Vehicle inventory lives in `src/content/cars/*.json` (one file per car) with photos in `public/uploads/cars/`. The client edits these through the Decap CMS panel at `/admin`, which commits straight to the repository.
 
-- The section contains three service tiles.
-- The active tile is sharp and centered.
-- The two neighboring tiles remain visible with blur and reduced opacity.
-- The section pins while scrolling through its three-slide scroll track.
-- The active service changes from scroll position only.
-- After the final slide, normal page scrolling continues to the next section.
-- The code respects reduced-motion preferences by disabling transitions.
+## Motion
 
-To change the services, update `src/data/services.ts`. To change the layout or scroll behavior, edit `BusinessPreview.astro`.
+Motion is deliberately limited to four behaviours: the hero entrance, the featured vehicle's photograph settling in on scroll (`data-reveal-media`), a slow scale on photograph hover, and the marques strip. Text is never hidden waiting for scroll. See the animation notes in `src/styles/global.css` before adding anything.
 
 ## Styling
 

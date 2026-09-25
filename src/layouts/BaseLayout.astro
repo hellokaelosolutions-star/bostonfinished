@@ -80,11 +80,9 @@ const pageTitle = title === site.name ? title : `${title} — ${site.name}`;
     <MobileCTA />
 
     <script>
-      // Reveal on scroll. Elements stay visible if IntersectionObserver is
-      // unavailable, because `html.js` is the only thing that hides them.
-      const revealables = document.querySelectorAll<HTMLElement>(
-        '[data-reveal], [data-reveal-media]',
-      );
+      // Featured-image settle. Stays visible if IntersectionObserver is
+      // unavailable, because `html.js` is the only thing that hides it.
+      const revealables = document.querySelectorAll<HTMLElement>('[data-reveal-media]');
 
       if (!('IntersectionObserver' in window)) {
         document.documentElement.classList.remove('js');

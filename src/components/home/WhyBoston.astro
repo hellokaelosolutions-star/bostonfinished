@@ -4,12 +4,10 @@ import Container from '../ui/Container.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 
 /**
- * Horizontal numbered rows, not a four-card grid.
- *
- * Four equal boxes made these read as feature bullets in a SaaS pricing page.
- * As full-width rules with a large index, they read as chapters — and the
- * rule that expands on hover gives the interaction somewhere to live without
- * adding another container.
+ * Full-width ruled rows, not a four-card grid — four equal boxes read as
+ * feature bullets on a pricing page. These are qualities rather than steps, so
+ * they carry no index numbers, and nothing moves on hover because nothing here
+ * is clickable.
  */
 ---
 
@@ -17,31 +15,12 @@ import SectionHeading from '../ui/SectionHeading.astro';
   <Container>
     <SectionHeading eyebrow="Why Boston Motors" title="The Boston Motors experience." />
 
-    <ul class="mt-14">
+    <ul class="mt-12">
       {
-        pillars.map((pillar, index) => (
-          <li
-            class="group relative border-t border-line last:border-b"
-            data-reveal
-            style={`--reveal-delay: ${index * 80}ms`}
-          >
-            {/* The expanding rule: sits on top of the static border. */}
-            <span
-              class="absolute inset-x-0 top-0 h-px w-0 bg-teal-light transition-[width] duration-[var(--duration-slow)] ease-[var(--ease-out-soft)] group-hover:w-full"
-              aria-hidden="true"
-            />
-
-            <div class="grid grid-cols-[auto_1fr] items-baseline gap-x-6 py-7 sm:gap-x-12 lg:grid-cols-[auto_20rem_1fr] lg:py-9">
-              <span class="font-display text-[0.6875rem] font-semibold tracking-[0.2em] text-muted transition-colors duration-[var(--duration-normal)] group-hover:text-teal-light">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-
-              <h3 class="t-card font-display font-semibold transition-transform duration-[var(--duration-normal)] ease-[var(--ease-out-soft)] group-hover:translate-x-1">
-                {pillar.title}
-              </h3>
-
-              <p class="col-start-2 mt-3 max-w-md card-copy lg:col-start-3 lg:mt-0">{pillar.body}</p>
-            </div>
+        pillars.map((pillar) => (
+          <li class="grid gap-2 border-t border-line py-6 last:border-b sm:grid-cols-[14rem_1fr] sm:items-baseline sm:gap-12 lg:grid-cols-[20rem_1fr] lg:py-8">
+            <h3 class="t-card font-display font-semibold">{pillar.title}</h3>
+            <p class="max-w-md card-copy">{pillar.body}</p>
           </li>
         ))
       }

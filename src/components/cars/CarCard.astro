@@ -12,8 +12,6 @@ interface Props {
    * point, and it disappears if everything is a feature.
    */
   variant?: 'default' | 'feature';
-  /** Milliseconds to offset this card's scroll reveal, for staggering a row. */
-  revealDelay?: number;
 }
 
 const {
@@ -21,113 +19,48 @@ const {
   loading = 'lazy',
   sizes = '(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw',
   variant = 'default',
-  revealDelay = 0,
 } = Astro.props;
-
-const revealStyle = revealDelay ? `--reveal-delay: ${revealDelay}ms` : undefined;
 
 // Specs are optional by design — the card must look intentional without them.
 const specs = [car.year, car.fuel, car.transmission].filter(Boolean);
+const meta = specs.length > 0 ? specs.join(' · ') : car.category;
+
+const imageHover =
+  'transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out-soft)]';
 ---
 
 {
   variant === 'feature' ? (
-    <article
-      class="group relative overflow-hidden rounded-md border border-line bg-panel transition-colors duration-[var(--duration-normal)] hover:border-teal-light/40"
-      data-reveal
-      style={revealStyle}
-    >
+    <article class="group relative overflow-hidden rounded-md bg-panel">
       <a href={`/cars/${car.slug}`} class="block">
-        {/* The page's one deliberate scroll moment: the photograph settles, then
-            the type arrives over it. */}
+        {/* The page's one scroll moment: the photograph settles into place. */}
         <div data-reveal-media>
           <img
             src={car.image}
             alt={car.alt}
             sizes={sizes}
             loading={loading}
-            class="aspect-4/3 w-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out-soft)] group-hover:scale-[1.035] sm:aspect-16/9 lg:aspect-21/9"
+            class:list={[
+              'aspect-4/3 w-full object-cover group-hover:scale-[1.02] sm:aspect-16/9 lg:aspect-21/9',
+              imageHover,
+            ]}
           />
         </div>
 
-        <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
+        {/* Legibility scrim for the type, confined to the lower half. */}
+        <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-bg/90 to-transparent" />
 
         <div class="absolute inset-x-0 bottom-0 p-6 sm:p-10">
-          {/* Brand sits above the model, smaller and spaced — the marque is the
-              label, the model is the headline. One visual weight for both reads
-              as a listing. */}
-          <p
-            class="font-display text-xs font-semibold tracking-[0.2em] text-muted uppercase sm:text-sm"
-            data-reveal
-            style="--reveal-delay: 260ms"
-          >
+          <p class="font-display text-xs font-semibold tracking-[0.18em] text-muted uppercase">
             {car.brand}
           </p>
-
-          <h3
-            class="mt-1 font-display text-3xl font-semibold sm:text-4xl lg:text-5xl"
-            data-reveal
-            style="--reveal-delay: 340ms"
-          >
-            {car.model}
-          </h3>
-
-          {/* Spacing expresses grouping: brand+model are one unit (4px), the
-              meta block is a second unit (4px internally) held 16px away, and
-              the action sits 28px clear of both. */}
-          <div data-reveal style="--reveal-delay: 420ms">
-            <p class="mt-4 card-copy">{specs.length > 0 ? specs.join(' · ') : car.category}</p>
-
-            {/* Price shares the meta size — it is separated by weight and colour
-                rather than by adding a fifth type size to one card. */}
-            {car.price && (
-              <p class="mt-1 font-display text-[0.9375rem] font-semibold text-fg">{car.price}</p>
-            )}
-
-            <span class="mt-7 inline-flex items-center gap-2 font-display text-sm font-semibold text-teal-light">
-              Explore vehicle
-              <span
-                class="transition-transform duration-[var(--duration-fast)] group-hover:translate-x-1"
-                aria-hidden="true"
-              >
-                &rarr;
-              </span>
-            </span>
-          </div>
-        </div>
-      </a>
-    </article>
-  ) : (
-    <article
-      class="group overflow-hidden rounded-md border border-line bg-panel shadow-card transition-colors duration-[var(--duration-normal)] hover:border-teal-light/40"
-      data-reveal
-      style={revealStyle}
-    >
-      <a href={`/cars/${car.slug}`} class="block">
-        <div class="overflow-hidden">
-          <img
-            src={car.image}
-            alt={car.alt}
-            sizes={sizes}
-            loading={loading}
-            class="aspect-16/10 w-full object-cover transition-transform duration-[var(--duration-slow)] ease-[var(--ease-out-soft)] group-hover:scale-[1.03]"
-          />
-        </div>
-
-        <div class="p-6">
-          <p class="font-display text-[0.6875rem] font-semibold tracking-[0.2em] text-muted uppercase">
-            {car.brand}
-          </p>
-
-          <h3 class="mt-1 font-display text-xl font-semibold">{car.model}</h3>
-
-          <p class="mt-3 card-copy">{specs.length > 0 ? specs.join(' · ') : car.category}</p>
-
+          <h3 class="mt-1 font-display text-3xl font-semibold sm:text-4xl">{car.model}</h3>
+          <p class="mt-3 card-copy">{meta}</p>
           {car.price && (
             <p class="mt-1 font-display text-[0.9375rem] font-semibold text-fg">{car.price}</p>
           )}
 
-          <span class="mt-6 inline-flex items-center gap-2 font-display text-sm font-semibold text-teal-light">
+          <span class="mt-5 inline-flex items-center gap-2 font-display text-sm font-semibold text-teal-light">
             Explore vehicle
             <span
               class="transition-transform duration-[var(--duration-fast)] group-hover:translate-x-1"
@@ -136,6 +69,38 @@ const specs = [car.year, car.fuel, car.transmission].filter(Boolean);
               &rarr;
             </span>
           </span>
+        </div>
+      </a>
+    </article>
+  ) : (
+    <article class="group">
+      <a href={`/cars/${car.slug}`} class="block">
+        <div class="overflow-hidden rounded-md bg-panel">
+          <img
+            src={car.image}
+            alt={car.alt}
+            sizes={sizes}
+            loading={loading}
+            class:list={['aspect-3/2 w-full object-cover group-hover:scale-[1.03]', imageHover]}
+          />
+        </div>
+
+        <div class="mt-4 flex items-start justify-between gap-4">
+          <div>
+            <p class="font-display text-[0.6875rem] font-semibold tracking-[0.18em] text-muted uppercase">
+              {car.brand}
+            </p>
+            <h3 class="mt-1 font-display text-xl font-semibold transition-colors group-hover:text-teal-light">
+              {car.model}
+            </h3>
+            <p class="mt-1 card-copy">{meta}</p>
+          </div>
+
+          {car.price && (
+            <p class="shrink-0 pt-4 font-display text-[0.9375rem] font-semibold text-fg">
+              {car.price}
+            </p>
+          )}
         </div>
       </a>
     </article>

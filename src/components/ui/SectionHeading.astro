@@ -19,10 +19,7 @@ const sizes = {
 };
 ---
 
-<div
-  class:list={[align === 'center' && 'text-center mx-auto max-w-2xl', className]}
-  data-reveal
->
+<div class:list={[align === 'center' && 'text-center mx-auto max-w-2xl', className]}>
   {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
   <Tag class:list={[sizes[Tag], 'text-fg']} set:html={title} />
   <slot />

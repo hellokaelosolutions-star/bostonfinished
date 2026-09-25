@@ -37,12 +37,10 @@ const others = founder ? team.filter((member) => member !== founder) : team;
       {
         founder && (
           <div class="mb-16 lg:mb-24">
-            <p class="eyebrow mb-8" data-reveal>
-              Leadership
-            </p>
+            <p class="eyebrow mb-8">Leadership</p>
 
             <div class="grid items-center gap-10 lg:grid-cols-[0.8fr_1fr] lg:gap-16">
-              <div data-reveal>
+              <div>
                 <TeamPortrait
                   member={founder}
                   widths={[400, 700, 1000]}
@@ -52,7 +50,7 @@ const others = founder ? team.filter((member) => member !== founder) : team;
                 />
               </div>
 
-              <div data-reveal style="--reveal-delay: 120ms">
+              <div>
                 <h2 class="font-display text-3xl font-semibold sm:text-4xl">{founder.name}</h2>
                 {founder.role && <p class="eyebrow mt-3">{founder.role}</p>}
                 {founder.bio && <p class="measure mt-6 text-muted">{founder.bio}</p>}
@@ -64,21 +62,19 @@ const others = founder ? team.filter((member) => member !== founder) : team;
 
       {
         founder && (
-          <p class="eyebrow mb-8" data-reveal>
-            Team
-          </p>
+          <p class="eyebrow mb-8">Team</p>
         )
       }
 
       <ul
         class:list={[
-          'grid grid-cols-2 gap-5 lg:gap-6',
+          'grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-6',
           founder ? 'lg:grid-cols-3' : 'lg:grid-cols-4',
         ]}
       >
         {
           others.map((member, index) => (
-            <li data-reveal style={`--reveal-delay: ${index * 80}ms`}>
+            <li>
               <TeamPortrait
                 member={member}
                 widths={[300, 500, 700]}

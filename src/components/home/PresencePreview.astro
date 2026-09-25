@@ -1,7 +1,7 @@
 ---
 import { locations } from '../../data/locations';
+import { contact } from '../../data/site';
 import Container from '../ui/Container.astro';
-import SectionHeading from '../ui/SectionHeading.astro';
 import ViewOnMap from '../ui/ViewOnMap.astro';
 
 // Incomplete locations never appear here: this section only represents a
@@ -9,20 +9,29 @@ import ViewOnMap from '../ui/ViewOnMap.astro';
 const verifiedLocations = locations.filter((location) => location.address && location.mapEmbedUrl);
 ---
 
-{/* Continues TeamPreview's ivory. Previously both were pure white, which is
-    not "grouped" but "identical" — a 0.0 L* step between two sections reads as
-    a striping mistake, not a decision. Now the shared surface is the page's
-    own ground, so the pair reads as one continuous chapter. */}
-<section class="py-section lg:py-section-lg">
+<section class="border-t border-line py-section lg:py-section-lg" aria-labelledby="presence-title">
   <Container>
-    <SectionHeading eyebrow="Our presence" title="Visit Boston Motors." align="center">
-      <p class="mx-auto mt-5 max-w-xl text-muted">
-        Come see the collection, meet the team and experience Boston Motors in person.
-      </p>
-    </SectionHeading>
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-5">
+        <p class="eyebrow mb-4">Our presence</p>
+        <h2 id="presence-title" class="t-section">Visit Boston Motors.</h2>
+        <p class="mt-5 max-w-sm text-muted">
+          Come see the collection, meet the team and experience Boston Motors in person.
+        </p>
 
-    <div class="mx-auto mt-14 max-w-3xl" data-reveal>
-      {verifiedLocations.map((location) => <ViewOnMap location={location} />)}
+        {
+          contact.hours && (
+            <dl class="mt-8 text-sm">
+              <dt class="text-muted">Showroom hours</dt>
+              <dd class="mt-1 font-display font-semibold text-fg">{contact.hours}</dd>
+            </dl>
+          )
+        }
+      </div>
+
+      <div class="flex flex-col gap-4 lg:col-span-7">
+        {verifiedLocations.map((location) => <ViewOnMap location={location} />)}
+      </div>
     </div>
   </Container>
 </section>

@@ -60,8 +60,8 @@ import { brands } from '../../data/brands';
                   loading="lazy"
                   class:list={[
                     // Monochrome and held back, so thirteen different logos read
-                    // as one row; full colour and a slight lift on hover.
-                    'w-auto object-contain opacity-80 grayscale brightness-125 transition duration-[var(--duration-normal)] ease-[var(--ease-out-soft)] hover:scale-105 hover:opacity-100 hover:brightness-100 hover:grayscale-0',
+                    // as one row rather than thirteen competing brand colours.
+                    'w-auto object-contain opacity-70 grayscale brightness-125',
                     brand.shape === 'badge' ? 'max-h-8' : 'max-h-4 sm:max-h-5',
                   ]}
                 />

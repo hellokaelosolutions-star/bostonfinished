@@ -50,7 +50,7 @@ const otherCars = cars.filter((other) => other.slug !== car.slug).slice(0, 3);
         <span aria-hidden="true">&larr;</span> All vehicles
       </a>
 
-      <div class="mt-8 overflow-hidden rounded-lg border border-line">
+      <div class="mt-8 overflow-hidden rounded-lg bg-panel">
         <img
           src={car.image}
           alt={car.alt}
@@ -103,7 +103,7 @@ const otherCars = cars.filter((other) => other.slug !== car.slug).slice(0, 3);
     <Container>
       <h2 class="text-2xl sm:text-3xl">More from the collection</h2>
 
-      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mt-10 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
         {otherCars.map((other) => <CarCard car={other} />)}
       </div>
     </Container>

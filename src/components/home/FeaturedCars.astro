@@ -22,12 +22,12 @@ const [lead, ...supporting] = await getFeaturedCars();
     <div class="flex flex-wrap items-end justify-between gap-6">
       <SectionHeading eyebrow="Featured collection" title="Currently on the floor." />
 
-      <div class="hidden sm:block" data-reveal>
+      <div class="hidden sm:block">
         <Button href="/cars" variant="secondary">View all vehicles</Button>
       </div>
     </div>
 
-    <div class="mt-14 flex flex-col gap-6">
+    <div class="mt-12 flex flex-col gap-10">
       <CarCard
         car={lead}
         variant="feature"
@@ -35,16 +35,10 @@ const [lead, ...supporting] = await getFeaturedCars();
         sizes="(min-width: 1240px) 1176px, 100vw"
       />
 
-      {/* Supporting cars land after the feature's type has settled, so the
-           sequence reads photograph → title → the rest of the collection. */}
-      <div class="grid gap-6 sm:grid-cols-2">
+      <div class="grid gap-10 sm:grid-cols-2 sm:gap-6">
         {
-          supporting.map((car, index) => (
-            <CarCard
-              car={car}
-              sizes="(min-width: 640px) 46vw, 100vw"
-              revealDelay={120 + index * 90}
-            />
+          supporting.map((car) => (
+            <CarCard car={car} sizes="(min-width: 640px) 46vw, 100vw" />
           ))
         }
       </div>
