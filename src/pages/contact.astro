@@ -58,14 +58,12 @@ const label = 'font-display text-sm font-medium text-fg';
   <section class="py-section lg:py-section-lg">
     <Container>
       <div class="grid gap-12 md:grid-cols-[1.3fr_1fr] md:gap-10 lg:gap-20">
-        {/*
-          TODO (blocking before launch): this form has no destination yet.
-          The site is fully static, so it needs either a form service endpoint
-          (Formspree/Netlify/Vercel Forms) set as `action`, or an Astro server
-          action with an adapter added. Until then, submitting does nothing —
-          do not put this page in front of a customer.
-        */}
-        <form class="flex flex-col gap-6">
+        {/* Delivered to the Boston Motors WhatsApp — see scripts/whatsapp-form.ts. */}
+        <form
+          class="flex flex-col gap-6"
+          data-whatsapp-form={contact.whatsapp}
+          data-subject="New enquiry from the Boston Motors website"
+        >
           <div>
             <label class={label} for="name">Name</label>
             <input class={field} type="text" id="name" name="name" required autocomplete="name" />
@@ -103,9 +101,16 @@ const label = 'font-display text-sm font-medium text-fg';
           </div>
 
           <div>
-            <Button type="submit" variant="primary" block>Send enquiry</Button>
+            <Button type="submit" variant="primary" block>Send on WhatsApp</Button>
+            <p class="mt-3 card-copy">
+              Opens WhatsApp with your enquiry written out, ready to send to {contact.phone}.
+            </p>
           </div>
         </form>
+
+        <script>
+          import '../scripts/whatsapp-form';
+        </script>
 
         <aside>
           <h2 class="eyebrow mb-5">Rather not write?</h2>

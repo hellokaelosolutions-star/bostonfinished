@@ -2,6 +2,7 @@
 import Button from '../components/ui/Button.astro';
 import Container from '../components/ui/Container.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
+import { contact } from '../data/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 /**
@@ -63,13 +64,13 @@ const label = 'font-display text-sm font-medium text-fg';
         The more you can tell us, the more useful our reply will be.
       </p>
 
-      {/*
-        TODO (blocking before launch): no destination yet. Same constraint as the
-        contact form — this static site needs a form service endpoint or an SSR
-        adapter plus an Astro action. Photo upload in particular requires a real
-        backend, so it is not offered here yet.
-      */}
-      <form class="mt-10 flex flex-col gap-6">
+      {/* Delivered to the Boston Motors WhatsApp — see scripts/whatsapp-form.ts.
+          Photos can be attached in the WhatsApp chat itself, so no upload here. */}
+      <form
+        class="mt-10 flex flex-col gap-6"
+        data-whatsapp-form={contact.whatsapp}
+        data-subject="Vehicle to sell — enquiry from the Boston Motors website"
+      >
         <div class="grid gap-6 sm:grid-cols-2">
           <div>
             <label class={label} for="name">Name</label>
@@ -114,9 +115,17 @@ const label = 'font-display text-sm font-medium text-fg';
         </div>
 
         <div>
-          <Button type="submit" variant="primary" block>Submit vehicle enquiry</Button>
+          <Button type="submit" variant="primary" block>Send on WhatsApp</Button>
+          <p class="mt-3 card-copy">
+            Opens WhatsApp with your vehicle details written out, ready to send to {contact.phone}.
+            You can add photos in the chat.
+          </p>
         </div>
       </form>
+
+      <script>
+        import '../scripts/whatsapp-form';
+      </script>
     </Container>
   </section>
 </BaseLayout>

@@ -43,9 +43,8 @@ export const contact = {
   phoneHref: `tel:+${PHONE_DIGITS}`,
   email: 'bostonmotorsllp@gmail.com',
   /**
-   * ⚠️ STILL INFERRED: assumes the WhatsApp line is the same number as the
-   * phone. This is the 1:1 enquiry channel — confirm before launch, since
-   * WhatsApp is often a different handset.
+   * The 1:1 enquiry channel — confirmed as the same number as the phone. The
+   * contact and sell-your-car forms deliver here too (see whatsapp-form.ts).
    */
   whatsapp: `https://wa.me/${PHONE_DIGITS}`,
   /**
