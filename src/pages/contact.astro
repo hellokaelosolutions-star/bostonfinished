@@ -40,13 +40,17 @@ const label = 'font-display text-sm font-medium text-fg';
 ---
 
 <BaseLayout
-  title="Contact"
-  description="Get in touch with Boston Motors about a vehicle, the business, or a partnership."
+  title="Contact Boston Motors | Calicut Showroom, Phone & WhatsApp"
+  description={`Call ${contact.phone}, message us on WhatsApp or visit Boston Motors at Madheena Arcade, Mini Bypass, Calicut. Open ${contact.hours.replace(' · ', ', ')}.`}
+  crumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Contact', path: '/contact/' },
+  ]}
 >
   {/* Not "Let's start a conversation" — the footer owns that line site-wide,
        and it appeared twice on this page. This asks the page's actual question. */}
   <PageHeader
-    eyebrow="Contact"
+    eyebrow="Contact Boston Motors"
     title="How can we help?"
     intro="Tell us what you need and the right person will come back to you."
   />

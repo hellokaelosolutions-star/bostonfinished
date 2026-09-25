@@ -130,6 +130,7 @@ const linkClass = 'tap w-full card-copy transition-colors hover:text-fg md:w-aut
         <div class="footer-col pt-4 pb-8 md:pt-0 md:pb-0">
           <h2 class="eyebrow flex min-h-10 items-center md:min-h-0">Get in touch</h2>
 
+          <address class="not-italic">
           <ul class="mt-1 flex flex-col md:mt-3">
             {
               contact.phone && (
@@ -188,6 +189,7 @@ const linkClass = 'tap w-full card-copy transition-colors hover:text-fg md:w-aut
             }
             {contact.hours && <li class="flex min-h-11 items-center card-copy">{contact.hours}</li>}
           </ul>
+          </address>
 
           <SocialLinks class="mt-4" />
         </div>

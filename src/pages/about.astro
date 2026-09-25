@@ -9,11 +9,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="About"
-  description="Boston Motors is a growing automotive company dealing in premium pre-owned vehicles, with a presence in Calicut and Delhi."
+  title="About Boston Motors | Pre-Owned Car Dealer in Calicut"
+  description="Who Boston Motors is, how buying a pre-owned luxury car with us works from first look to handover, and where to find our showroom in Calicut."
+  crumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'About', path: '/about/' },
+  ]}
 >
   <PageHeader
-    eyebrow="About"
+    eyebrow="About Boston Motors"
     title="More than a dealership."
     intro="A growing automotive company built around premium pre-owned vehicles and the people who buy them."
   />

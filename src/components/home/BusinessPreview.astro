@@ -20,7 +20,7 @@ import Container from '../ui/Container.astro';
       </div>
 
       <a
-        href="/business"
+        href="/business/"
         class="tap hidden gap-2 font-display text-sm font-semibold text-muted transition-colors hover:text-fg sm:inline-flex"
       >
         About our services <span aria-hidden="true">&rarr;</span>
@@ -31,7 +31,7 @@ import Container from '../ui/Container.astro';
       {
         services.map((service) => (
           <li>
-            <a href={`/business#${service.id}`} class="group block">
+            <a href={`/business/#${service.id}`} class="group block">
               <div class="overflow-hidden rounded-md bg-panel">
                 <Image
                   src={service.image}

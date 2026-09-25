@@ -28,11 +28,11 @@ export const site = {
  * is a secondary landing page reached from the homepage, Cars and the final CTA.
  */
 export const navLinks = [
-  { label: 'About', href: '/about' },
-  { label: 'Business', href: '/business' },
-  { label: 'Cars', href: '/cars' },
-  { label: 'Team', href: '/team' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'About', href: '/about/' },
+  { label: 'Business', href: '/business/' },
+  { label: 'Cars', href: '/cars/' },
+  { label: 'Team', href: '/team/' },
+  { label: 'Contact', href: '/contact/' },
 ] as const;
 
 const PHONE_DIGITS = '917594000092';
@@ -60,6 +60,12 @@ export const contact = {
    */
   whatsappGroup: 'https://chat.whatsapp.com/BlL2vqeDf7yGMpsBMDD5nJ',
   hours: 'Mon – Sat · 9:30 AM – 8 PM',
+  /** The same hours for structured data. Change both together. */
+  openingHours: {
+    days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    opens: '09:30',
+    closes: '20:00',
+  },
   instagram: 'https://www.instagram.com/bostonmotorsllp/' as string | null,
 };
 
@@ -89,17 +95,17 @@ export type FooterLink = { label: string; href: string | null };
  */
 export const footerNav: { company: FooterLink[]; automotive: FooterLink[] } = {
   company: [
-    { label: 'About', href: '/about' },
-    { label: 'Business', href: '/business' },
-    { label: 'Cars', href: '/cars' },
-    { label: 'Team', href: '/team' },
-    { label: 'Contact', href: '/contact' },
+    { label: 'About', href: '/about/' },
+    { label: 'Business', href: '/business/' },
+    { label: 'Cars', href: '/cars/' },
+    { label: 'Team', href: '/team/' },
+    { label: 'Contact', href: '/contact/' },
   ],
   automotive: [
-    { label: 'Pre-Owned', href: '/business#pre-owned' },
-    { label: 'Other-State', href: '/business#other-state' },
-    { label: 'Authorized Service', href: '/business#authorized-service' },
-    { label: 'Sell Your Vehicle', href: '/sell-your-car' },
+    { label: 'Pre-Owned', href: '/business/#pre-owned' },
+    { label: 'Other-State', href: '/business/#other-state' },
+    { label: 'Authorized Service', href: '/business/#authorized-service' },
+    { label: 'Sell Your Vehicle', href: '/sell-your-car/' },
   ],
 };
 

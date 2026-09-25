@@ -17,6 +17,8 @@
 export type Location = {
   city: string;
   address: string | null;
+  /** The same address split into parts, for structured data. Must match `address`. */
+  postal?: { street: string; locality: string; region: string; postalCode: string };
   mapUrl: string | null;
   /** Embed URL based on the confirmed street address; no coordinates are guessed. */
   mapEmbedUrl: string | null;
@@ -27,6 +29,12 @@ export const locations: Location[] = [
   {
     city: 'Calicut',
     address: 'Madheena Arcade, Mini Bypass, Thiruvannur, Calicut, Kerala 673029',
+    postal: {
+      street: 'Madheena Arcade, Mini Bypass, Thiruvannur',
+      locality: 'Calicut',
+      region: 'Kerala',
+      postalCode: '673029',
+    },
     /** Official short link from the Google Business listing. */
     mapUrl: 'https://maps.app.goo.gl/Uf8iTeUNcyxA9F7u9',
     mapEmbedUrl:

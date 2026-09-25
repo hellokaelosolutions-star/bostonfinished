@@ -11,6 +11,8 @@ export type Service = {
   alt: string;
   /** DRAFT COPY — placeholder pending Boston Motors' own wording. */
   summary: string;
+  /** Where someone interested in this service goes next. */
+  next: { label: string; href: string };
 };
 
 /**
@@ -29,6 +31,7 @@ export const services: Service[] = [
     image: preOwned,
     alt: 'A pre-owned vehicle prepared for sale at Boston Motors',
     summary: 'Curated pre-owned vehicles, selected and prepared before they reach the floor.',
+    next: { label: 'Browse pre-owned cars', href: '/cars/' },
   },
   {
     id: 'other-state',
@@ -36,6 +39,7 @@ export const services: Service[] = [
     image: otherState,
     alt: 'Paperwork and handover for an other-state vehicle registration',
     summary: 'Support with vehicles registered outside the state, handled end to end.',
+    next: { label: 'Ask about an other-state vehicle', href: '/contact/' },
   },
   {
     id: 'authorized-service',
@@ -43,5 +47,6 @@ export const services: Service[] = [
     image: authorized,
     alt: 'A vehicle undergoing authorized service',
     summary: 'Ongoing service support, so ownership continues after the sale.',
+    next: { label: 'Enquire about servicing', href: '/contact/' },
   },
 ];

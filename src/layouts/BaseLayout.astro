@@ -5,38 +5,82 @@ import Footer from '../components/global/Footer.astro';
 import MobileCTA from '../components/global/MobileCTA.astro';
 import Navbar from '../components/global/Navbar.astro';
 import { site } from '../data/site';
+import { pageGraph, type Crumb } from '../lib/seo';
 import '../styles/global.css';
 
 interface Props {
+  /** The complete <title>, written per page — not assembled from a template. */
   title: string;
   description: string;
+  /** Absolute or root-relative share image. Defaults to the showroom storefront. */
+  image?: string;
+  imageAlt?: string;
+  /** Breadcrumb trail for structured data, home first. Omitted on the homepage. */
+  crumbs?: Crumb[];
+  /** Page-specific JSON-LD nodes (a Car, the Services…) added to the graph. */
+  schema?: Record<string, unknown>[];
+  /** For pages that must never be indexed (the 404). Drops canonical and JSON-LD too. */
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const {
+  title,
+  description,
+  image = '/og-image.jpg',
+  imageAlt = 'The Boston Motors showroom on Mini Bypass, Calicut',
+  crumbs,
+  schema,
+  noindex = false,
+} = Astro.props;
 
-const pageTitle = title === site.name ? title : `${title} — ${site.name}`;
+// `site` is set in astro.config.mjs; every URL a crawler or social card sees
+// is absolute and on the one canonical origin. Query strings never reach it.
+const origin = Astro.site ?? Astro.url;
+const canonical = new URL(Astro.url.pathname, origin).href;
+const imageUrl = new URL(image, origin).href;
+const graph = pageGraph({ origin, canonical, title, description, image: imageUrl, crumbs, extra: schema });
 ---
 
 <!doctype html>
-<html lang="en" class="bg-bg">
+<html lang="en-IN" class="bg-bg">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
-    <title>{pageTitle}</title>
+    <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={Astro.url.pathname} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
+    <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:site_name" content={site.name} />
-    <meta property="og:title" content={pageTitle} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:alt" content={imageAlt} />
+    {
+      image === '/og-image.jpg' && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+        </>
+      )
+    }
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
 
-    {/* TODO: absolute canonical + og:image URLs need `site` set in astro.config.mjs. */}
+    {!noindex && <script is:inline type="application/ld+json" set:html={graph} />}
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#071014" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <Font cssVariable="--font-manrope" preload />
     <Font cssVariable="--font-inter" preload />

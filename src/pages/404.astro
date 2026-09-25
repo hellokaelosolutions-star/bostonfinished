@@ -1,0 +1,32 @@
+---
+import Button from '../components/ui/Button.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import Container from '../components/ui/Container.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Netlify serves this for any missing URL, with a real 404 status. It is kept
+// out of the index and the sitemap, and points people back to the pages they
+// most likely wanted.
+---
+
+<BaseLayout
+  title="Page Not Found | Boston Motors"
+  description="This page doesn't exist or has moved. Browse the current collection of pre-owned luxury cars, or contact the Boston Motors showroom in Calicut."
+  noindex
+>
+  <PageHeader
+    eyebrow="Page not found"
+    title="This page has moved or no longer exists."
+    intro="If you followed a link to a specific car, it may have been sold."
+  />
+
+  <section class="py-section">
+    <Container>
+      <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
+        <Button href="/cars/" variant="primary" block>Browse the collection</Button>
+        <Button href="/" variant="secondary" block>Go to the homepage</Button>
+        <Button href="/contact/" variant="secondary" block>Contact us</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

@@ -22,10 +22,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
  */
 const founder = team.find((member) => member.isFounder);
 const others = founder ? team.filter((member) => member !== founder) : team;
+
+const names = team.map((member) => member.name);
+const nameList = `${names.slice(0, -1).join(', ')} and ${names.at(-1)}`;
 ---
 
-<BaseLayout title="Team" description="The people behind Boston Motors.">
-  <PageHeader eyebrow="Our team" title="The people behind Boston Motors." />
+<BaseLayout
+  title="Meet the Team Behind Boston Motors, Calicut"
+  description={`Meet ${nameList}, the people behind Boston Motors, the pre-owned luxury car showroom on Mini Bypass in Calicut, Kerala.`}
+  crumbs={[
+    { name: 'Home', path: '/' },
+    { name: 'Team', path: '/team/' },
+  ]}
+>
+  <PageHeader eyebrow="Meet the team" title="The people behind Boston Motors." />
 
   {/* Tighter at the top than the standard `py-section`: the heading band above
       already carries 6rem of its own bottom padding, and stacking a full

@@ -44,11 +44,17 @@ const reach = locations
 
   <Container class="relative pt-28 pb-12 sm:pt-32 sm:pb-16 lg:pb-24">
     <div class="max-w-2xl">
-      {/* Entrance runs eyebrow → heading → copy → buttons, landing at ~900ms. */}
-      <p class="eyebrow" data-hero-item style="--delay: 120ms">{reach}</p>
-
-      <h1 class="t-hero mt-4 sm:mt-5" data-hero-item style="--delay: 220ms">
-        Where luxury<br />meets legacy.
+      {/* Entrance runs eyebrow → heading → copy → buttons, landing at ~900ms.
+          The eyebrow is part of the <h1>: the tagline alone doesn't say what
+          the business is or where; the eyebrow does. */}
+      <h1>
+        <span class="eyebrow block" data-hero-item style="--delay: 120ms">
+          Pre-owned luxury cars · {reach}
+        </span>
+        <span class="sr-only">: </span>
+        <span class="t-hero mt-4 block sm:mt-5" data-hero-item style="--delay: 220ms">
+          Where luxury<br />meets legacy.
+        </span>
       </h1>
 
       <p
@@ -64,8 +70,8 @@ const reach = locations
         data-hero-item
         style="--delay: 400ms"
       >
-        <Button href="/cars" variant="primary" block>Explore collection</Button>
-        <Button href="/about" variant="secondary" block>Discover Boston Motors</Button>
+        <Button href="/cars/" variant="primary" block>Explore collection</Button>
+        <Button href="/about/" variant="secondary" block>Discover Boston Motors</Button>
       </div>
     </div>
   </Container>
