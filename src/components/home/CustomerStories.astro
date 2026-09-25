@@ -36,7 +36,7 @@ const photos = [
           reviewSummary.count > 0 && (
             <a
               href={reviewSummary.url}
-              class="link-underline mt-6 inline-flex items-center gap-2 font-display text-sm font-semibold text-teal-light"
+              class="tap mt-3 gap-2 font-display text-sm font-semibold text-teal-light"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -91,17 +91,22 @@ const photos = [
       </ul>
     </div>
 
-    <ul class="mt-14 grid grid-cols-3 gap-2 sm:gap-4 lg:mt-20">
+    {/* Three equal frames on a phone are thumbnails nobody can read, so the
+        first photograph leads full width and the other two pair beneath it. */}
+    <ul class="mt-12 grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4 lg:mt-20">
       {
-        photos.map((photo) => (
-          <li class="overflow-hidden rounded-md bg-panel">
+        photos.map((photo, index) => (
+          <li class:list={['overflow-hidden rounded-md bg-panel', index === 0 && 'col-span-2 sm:col-span-1']}>
             <Image
               src={photo.image}
               alt={photo.alt}
-              widths={[240, 420, 640]}
-              sizes="(min-width: 1240px) 390px, 32vw"
+              widths={[240, 420, 640, 800]}
+              sizes={index === 0 ? '(min-width: 640px) 32vw, 92vw' : '(min-width: 640px) 32vw, 46vw'}
               loading="lazy"
-              class="aspect-square h-full w-full object-cover sm:aspect-5/4"
+              class:list={[
+                'h-full w-full object-cover sm:aspect-5/4',
+                index === 0 ? 'aspect-3/2' : 'aspect-square',
+              ]}
             />
           </li>
         ))

@@ -42,21 +42,25 @@ const reach = locations
     <div class="hero-scrim absolute inset-0"></div>
   </div>
 
-  <Container class="relative pt-32 pb-16 lg:pb-24">
+  <Container class="relative pt-28 pb-12 sm:pt-32 sm:pb-16 lg:pb-24">
     <div class="max-w-2xl">
       {/* Entrance runs eyebrow → heading → copy → buttons, landing at ~900ms. */}
       <p class="eyebrow" data-hero-item style="--delay: 120ms">{reach}</p>
 
-      <h1 class="t-hero mt-5" data-hero-item style="--delay: 220ms">
+      <h1 class="t-hero mt-4 sm:mt-5" data-hero-item style="--delay: 220ms">
         Where luxury<br />meets legacy.
       </h1>
 
-      <p class="mt-7 max-w-md text-lg text-muted" data-hero-item style="--delay: 320ms">
+      <p
+        class="mt-5 max-w-md text-muted sm:mt-7 sm:text-lg"
+        data-hero-item
+        style="--delay: 320ms"
+      >
         Premium pre-owned automobiles, built around trust, quality and confidence.
       </p>
 
       <div
-        class="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4"
+        class="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:gap-4"
         data-hero-item
         style="--delay: 400ms"
       >

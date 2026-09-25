@@ -36,7 +36,7 @@ const columns = [
   { title: 'Automotive', links: automotive },
 ].filter((column) => column.links.length > 0);
 
-const linkClass = 'card-copy transition-colors hover:text-fg';
+const linkClass = 'tap w-full card-copy transition-colors hover:text-fg md:w-auto';
 ---
 
 <footer id="site-footer" class="relative overflow-hidden bg-footer">
@@ -85,38 +85,36 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
   }
 
   {/* ============ Structural grid ============
-       Brand column is intentionally ~1.8x the link columns. Rules are dotted
-       hairlines that build the composition, not borders that box content. */}
-  {/* No rule here in either case. With the CTA present, the teal-to-near-black
-       colour change is already the divider and a dotted line on top of it reads
-       as a mistake. Without it the footer shares the page ground, and the
-       dotted rules inside the grid below give it all the structure it needs. */}
+       Three arrangements, one markup:
+         phone   — stacked; the two link lists collapse into accordions
+         tablet  — brand across the top, three columns beneath it
+         desktop — four columns, brand ~1.8x the link columns
+       Hairline rules build the composition; they never box content. */}
   <div>
     <Container>
-      <div class="lg:grid lg:grid-cols-[1.8fr_1fr_1fr_1.4fr]">
-        {/* Brand */}
-        <div class="py-12 lg:py-16 lg:pr-12">
+      <div class="footer-grid">
+        <div class="footer-brand py-10 md:py-12 lg:py-16 lg:pr-12">
           <Image src={logo} alt={site.name} width={200} densities={[1, 2]} class="h-9 w-auto" />
-          <p class="mt-6 max-w-xs card-copy">{site.tagline}</p>
+          <p class="mt-5 max-w-xs card-copy">{site.tagline}</p>
         </div>
 
         {/*
           Link columns. Markup ships `open` so the footer is complete without
-          JS; an inline script below collapses them on small screens before
-          paint, so there is no flash of expanded content.
+          JS; an inline script below collapses them on phones before paint, so
+          there is no flash of expanded content.
         */}
         {
           columns.map((column) => (
-            <details open class="footer-accordion rule-t lg:rule-l lg:rule-t-none lg:py-16">
-              <summary class="flex cursor-pointer items-center justify-between py-5 lg:cursor-default lg:py-0 lg:pl-8">
+            <details open class="footer-accordion footer-col">
+              <summary class="flex min-h-14 cursor-pointer items-center justify-between md:min-h-0 md:cursor-default">
                 <span class="eyebrow">{column.title}</span>
-                <span class="accordion-icon relative h-3 w-3 lg:hidden" aria-hidden="true">
+                <span class="accordion-icon relative h-3 w-3 md:hidden" aria-hidden="true">
                   <span class="absolute top-1/2 left-0 h-px w-3 -translate-y-1/2 bg-muted" />
                   <span class="accordion-bar absolute top-0 left-1/2 h-3 w-px -translate-x-1/2 bg-muted transition-transform duration-[var(--duration-normal)]" />
                 </span>
               </summary>
 
-              <ul class="flex flex-col gap-3.5 pb-7 lg:mt-7 lg:pb-0 lg:pl-8">
+              <ul class="flex flex-col pb-4 md:mt-3 md:pb-0">
                 {column.links.map((link) => (
                   <li>
                     <a href={link.href} class={linkClass}>
@@ -129,17 +127,16 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
           ))
         }
 
-        {/* Get in touch */}
-        <div class="rule-t py-7 lg:rule-l lg:rule-t-none lg:py-16 lg:pl-8">
-          <h2 class="eyebrow mb-7">Get in touch</h2>
+        <div class="footer-col pt-4 pb-8 md:pt-0 md:pb-0">
+          <h2 class="eyebrow flex min-h-10 items-center md:min-h-0">Get in touch</h2>
 
-          <ul class="flex flex-col gap-3.5">
+          <ul class="mt-1 flex flex-col md:mt-3">
             {
               contact.phone && (
                 <li>
                   <a
                     href={contact.phoneHref}
-                    class="font-display text-[0.9375rem] font-semibold text-fg transition-colors hover:text-teal-light"
+                    class="tap font-display text-[0.9375rem] font-semibold text-fg transition-colors hover:text-teal-light"
                   >
                     {contact.phone}
                   </a>
@@ -151,7 +148,7 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
                 <li>
                   <a
                     href={`mailto:${contact.email}`}
-                    class="card-copy transition-colors hover:text-fg"
+                    class="tap card-copy [overflow-wrap:anywhere] transition-colors hover:text-fg"
                   >
                     {contact.email}
                   </a>
@@ -163,7 +160,7 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
                 <li>
                   <a
                     href={contact.whatsapp}
-                    class="card-copy transition-colors hover:text-fg"
+                    class="tap card-copy transition-colors hover:text-fg"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -178,7 +175,7 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
                   <li>
                     <a
                       href={showroom.mapUrl}
-                      class="card-copy transition-colors hover:text-fg"
+                      class="tap card-copy transition-colors hover:text-fg"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -186,13 +183,13 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
                     </a>
                   </li>
                 ) : (
-                  <li class="card-copy">{showroom.city}, Kerala</li>
+                  <li class="flex min-h-11 items-center card-copy">{showroom.city}, Kerala</li>
                 ))
             }
-            {contact.hours && <li class="card-copy">{contact.hours}</li>}
+            {contact.hours && <li class="flex min-h-11 items-center card-copy">{contact.hours}</li>}
           </ul>
 
-          <SocialLinks class="mt-8" />
+          <SocialLinks class="mt-4" />
         </div>
       </div>
     </Container>
@@ -245,7 +242,7 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
   // mobile. Markup ships `open` so the footer is still complete without JS.
   (function () {
     var accordions = document.querySelectorAll('#site-footer .footer-accordion');
-    var desktop = window.matchMedia('(min-width: 1024px)');
+    var desktop = window.matchMedia('(min-width: 768px)');
 
     function sync() {
       for (var i = 0; i < accordions.length; i++) {
@@ -260,17 +257,44 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
 
 <style>
   /* Structural hairlines — composition, not card outlines. */
-  .rule-t {
+  .rule-t,
+  .footer-col {
     border-top: 1px solid var(--color-line);
   }
 
-  @media (min-width: 1024px) {
-    .lg\:rule-l {
-      border-left: 1px solid var(--color-line);
+  @media (min-width: 768px) {
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .lg\:rule-t-none {
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+
+    .footer-col {
+      padding-block: 2.5rem 3rem;
+    }
+
+    .footer-col + .footer-col {
+      border-left: 1px solid var(--color-line);
+      padding-left: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-grid {
+      grid-template-columns: 1.8fr 1fr 1fr 1.4fr;
+    }
+
+    .footer-brand {
+      grid-column: auto;
+    }
+
+    .footer-col {
       border-top: 0;
+      border-left: 1px solid var(--color-line);
+      padding: 4rem 0 4rem 2rem;
     }
   }
 
@@ -288,8 +312,8 @@ const linkClass = 'card-copy transition-colors hover:text-fg';
     transform: translateX(-50%) scaleY(0);
   }
 
-  @media (min-width: 1024px) {
-    /* Desktop: a plain column heading, never interactive. */
+  @media (min-width: 768px) {
+    /* Tablet and up: a plain column heading, never interactive. */
     .footer-accordion > summary {
       pointer-events: none;
     }

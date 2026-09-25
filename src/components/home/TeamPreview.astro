@@ -20,16 +20,16 @@ import TeamPortrait from '../ui/TeamPortrait.astro';
   <Container>
     <SectionHeading eyebrow="Our team" title="The people behind Boston Motors." />
 
-    {/* 2 columns on mobile, 4 on desktop. Source assets vary in ratio, so the
-         fixed 3:4 frame is what keeps the row even. */}
-    <ul class="mt-12 grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4 lg:gap-6">
+    {/* 2 columns on phones, 4 from tablet up. Source assets vary in ratio, so
+         the fixed 3:4 frame is what keeps the row even. */}
+    <ul class="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-4 lg:gap-6">
       {
         team.map((member) => (
           <li>
             <TeamPortrait
               member={member}
               widths={[300, 500, 700]}
-              sizes="(min-width: 1024px) 23vw, 46vw"
+              sizes="(min-width: 768px) 23vw, 46vw"
             />
 
             <h3 class="mt-4 font-display text-lg font-semibold">{member.name}</h3>

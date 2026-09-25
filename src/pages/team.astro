@@ -39,7 +39,7 @@ const others = founder ? team.filter((member) => member !== founder) : team;
           <div class="mb-16 lg:mb-24">
             <p class="eyebrow mb-8">Leadership</p>
 
-            <div class="grid items-center gap-10 lg:grid-cols-[0.8fr_1fr] lg:gap-16">
+            <div class="grid items-center gap-8 md:grid-cols-[0.8fr_1fr] md:gap-10 lg:gap-16">
               <div>
                 <TeamPortrait
                   member={founder}
@@ -69,7 +69,7 @@ const others = founder ? team.filter((member) => member !== founder) : team;
       <ul
         class:list={[
           'grid grid-cols-2 gap-x-4 gap-y-8 lg:gap-6',
-          founder ? 'lg:grid-cols-3' : 'lg:grid-cols-4',
+          founder ? 'md:grid-cols-3' : 'md:grid-cols-4',
         ]}
       >
         {
@@ -78,7 +78,7 @@ const others = founder ? team.filter((member) => member !== founder) : team;
               <TeamPortrait
                 member={member}
                 widths={[300, 500, 700]}
-                sizes="(min-width: 1024px) 23vw, 46vw"
+                sizes="(min-width: 768px) 23vw, 46vw"
                 loading={!founder && index < 2 ? 'eager' : 'lazy'}
               />
 

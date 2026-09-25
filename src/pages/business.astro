@@ -19,15 +19,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <section class="py-section lg:py-section-lg">
     <Container>
-      <ul class="flex flex-col gap-16 lg:gap-24">
+      <ul class="flex flex-col gap-14 md:gap-16 lg:gap-24">
         {
           services.map((service, index) => (
             <li
               id={service.id}
               class:list={[
-                'scroll-mt-28 grid items-center gap-8 lg:grid-cols-2 lg:gap-16',
-                // Alternate the image side on desktop; mobile always stacks image-first.
-                index % 2 === 1 && 'lg:[&>figure]:order-2',
+                'scroll-mt-24 grid items-center gap-6 md:grid-cols-2 md:gap-10 lg:gap-16',
+                // Alternate the image side from tablet up; phones always stack image-first.
+                index % 2 === 1 && 'md:[&>figure]:order-2',
               ]}
             >
               <figure class="overflow-hidden rounded-md bg-panel">
@@ -35,7 +35,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                   src={service.image}
                   alt={service.alt}
                   widths={[480, 800]}
-                  sizes="(min-width: 1024px) 45vw, 100vw"
+                  sizes="(min-width: 768px) 45vw, 100vw"
                   loading={index === 0 ? 'eager' : 'lazy'}
                   class="aspect-4/3 w-full object-cover lg:aspect-3/4"
                 />
@@ -47,7 +47,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 {/* DRAFT COPY — one line only, until Boston Motors supplies the real
                     description of each service. Deliberately claims nothing about
                     coverage, warranty, pricing or manufacturer authorisation. */}
-                <p class="measure mt-5 text-muted">{service.summary}</p>
+                <p class="measure mt-3 text-muted sm:mt-5">{service.summary}</p>
               </div>
             </li>
           ))

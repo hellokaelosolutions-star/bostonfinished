@@ -18,8 +18,12 @@ const isActive = (href: string) =>
   class="fixed inset-x-0 top-0 z-50 transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-soft)]"
   data-scrolled="false"
 >
-  <Container class="flex items-center justify-between py-5">
-    <a href="/" class="relative z-10 shrink-0" aria-label={`${site.name} — home`}>
+  <Container class="flex items-center justify-between py-3.5 sm:py-4">
+    <a
+      href="/"
+      class="relative z-10 flex min-h-11 shrink-0 items-center"
+      aria-label={`${site.name} — home`}
+    >
       <Image
         src={logo}
         alt={site.name}
@@ -31,7 +35,9 @@ const isActive = (href: string) =>
     </a>
 
     <nav class="hidden lg:block" aria-label="Primary">
-      <ul class="flex items-center gap-9">
+      {/* 1024px is also iPad landscape, so each link carries a full 44px
+          touch target; the underline is pulled back up to sit under the text. */}
+      <ul class="flex items-center gap-8">
         {
           navLinks.map((link) => (
             <li>
@@ -39,7 +45,7 @@ const isActive = (href: string) =>
                 href={link.href}
                 aria-current={isActive(link.href) ? 'page' : undefined}
                 class:list={[
-                  'link-underline font-display text-sm font-medium tracking-wide transition-colors duration-[var(--duration-fast)]',
+                  'link-underline tap font-display text-sm font-medium tracking-wide transition-colors duration-[var(--duration-fast)] after:bottom-2.5',
                   isActive(link.href) ? 'text-teal-light' : 'text-muted hover:text-fg',
                 ]}
               >
@@ -79,8 +85,11 @@ const isActive = (href: string) =>
     class="invisible fixed inset-0 z-0 bg-bg lg:hidden"
     style="clip-path: inset(0 0 100% 0); transition: clip-path 520ms var(--ease-out-soft), visibility 520ms;"
   >
-    <nav class="flex h-full flex-col justify-center px-7" aria-label="Mobile">
-      <ul class="flex flex-col">
+    {/* Scrolls when the menu is taller than the screen (a phone in landscape).
+        Auto margins centre the group otherwise, and unlike justify-center they
+        never push the top out of reach when it overflows. */}
+    <nav class="flex h-full flex-col overflow-y-auto px-5 pt-24 pb-10 sm:px-8" aria-label="Mobile">
+      <ul class="mt-auto flex flex-col">
         {
           navLinks.map((link, index) => (
             <li data-nav-item style={`--nav-delay: ${120 + index * 55}ms`}>
@@ -100,23 +109,23 @@ const isActive = (href: string) =>
       </ul>
 
       <div
-        class="mt-10"
+        class="mt-8 mb-auto"
         data-nav-item
         style={`--nav-delay: ${120 + navLinks.length * 55}ms`}
       >
         <a
           href="/sell-your-car"
-          class="inline-flex items-center gap-2 font-display text-lg font-semibold text-fg"
+          class="tap gap-2 font-display text-lg font-semibold text-fg"
         >
           Sell your vehicle
           <span aria-hidden="true">&rarr;</span>
         </a>
 
-        <ul class="mt-6 flex flex-col gap-3">
+        <ul class="mt-2 flex flex-col">
           {
             contact.phone && (
               <li>
-                <a href={contact.phoneHref} class="card-copy">
+                <a href={contact.phoneHref} class="tap card-copy">
                   {contact.phone}
                 </a>
               </li>
@@ -125,7 +134,7 @@ const isActive = (href: string) =>
           {
             contact.instagram && (
               <li>
-                <a href={contact.instagram} class="card-copy">
+                <a href={contact.instagram} class="tap card-copy">
                   Instagram
                 </a>
               </li>

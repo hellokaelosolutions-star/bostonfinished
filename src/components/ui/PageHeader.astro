@@ -11,10 +11,10 @@ const { eyebrow, title, intro } = Astro.props;
 ---
 
 {/* pt clears the fixed header. */}
-<section class="border-b border-line bg-band pt-32 pb-16 lg:pt-44 lg:pb-24">
+<section class="border-b border-line bg-band pt-28 pb-12 sm:pt-32 sm:pb-16 lg:pt-44 lg:pb-24">
   <Container>
-    {eyebrow && <p class="eyebrow mb-4">{eyebrow}</p>}
+    {eyebrow && <p class="eyebrow mb-3 sm:mb-4">{eyebrow}</p>}
     <h1 class="t-page max-w-3xl">{title}</h1>
-    {intro && <p class="mt-6 max-w-xl text-muted">{intro}</p>}
+    {intro && <p class="mt-4 max-w-xl text-muted sm:mt-6">{intro}</p>}
   </Container>
 </section>

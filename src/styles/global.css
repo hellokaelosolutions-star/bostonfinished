@@ -77,11 +77,11 @@
   --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  /* Vertical rhythm between major sections.
-     Tightened ~20% from the first pass — the page was reading sparse rather
-     than spacious. Premium is intentional space, not maximum space. */
-  --spacing-section: 5rem;
-  --spacing-section-lg: 7rem;
+  /* Vertical rhythm between major sections, fluid rather than stepped:
+     56px on a 320px phone → 80px from ~650px up for the standard section,
+     and 72px → 112px for the larger one used from lg. */
+  --spacing-section: clamp(3.5rem, 2.25rem + 6vw, 5rem);
+  --spacing-section-lg: clamp(4.5rem, 1.5rem + 6vw, 7rem);
 
   /* Four radii, all tight. Soft 16–24px corners on every surface are what make
      a site read as an app dashboard; a dealership should feel machined. */
@@ -101,6 +101,9 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* Native controls (select arrows, number spinners, autofill, scrollbars)
+       render for a dark page instead of drawing dark glyphs on dark inputs. */
+    color-scheme: dark;
   }
 
   /* Anchor targets must clear the fixed header. */
@@ -109,6 +112,10 @@
   }
 
   body {
+    /* Backstop only — no page currently overflows at any width from 320px.
+       `clip` rather than `hidden` so it creates no scroll container and fixed
+       or sticky children keep working. */
+    overflow-x: clip;
     background-color: var(--color-bg);
     color: var(--color-fg);
     font-family: var(--font-body);
@@ -269,37 +276,49 @@
   /* --- Type scale -------------------------------------------------------
      Contrast is the point. One very large statement per screen, everything
      else deliberately small. If two things are both big, neither is. */
-  /* 42px mobile → ~56px tablet → 76px desktop. The hero is the one statement
-     allowed to be large; everything below it steps well down. */
+  /* Fluid scale: each size is a rem floor plus a viewport term, so it grows
+     continuously from 320px to its cap instead of jumping at breakpoints.
+       hero     40px @320 → 60px @768 → 76px cap
+       page     32px @320 → 48px @768 → 56px cap
+       section  28px @320 → 36px @768 → 42px cap
+     The hero is the one statement allowed to be large. */
   .t-hero {
-    font-size: clamp(2.625rem, 7vw, 4.75rem);
+    font-size: clamp(2.5rem, 1.6rem + 4.5vw, 4.75rem);
     line-height: 1.08;
     letter-spacing: -0.03em;
   }
 
   .t-page {
-    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-size: clamp(2rem, 1.25rem + 3.6vw, 3.5rem);
     line-height: 1.1;
     letter-spacing: -0.026em;
   }
 
   .t-section {
-    font-size: clamp(1.75rem, 3.2vw, 2.625rem);
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.625rem);
     line-height: 1.15;
     letter-spacing: -0.022em;
   }
 
   .t-card {
-    font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
     line-height: 1.2;
     letter-spacing: -0.015em;
   }
 
   /* The closing statement outranks a section heading but not the hero. */
   .t-footer-cta {
-    font-size: clamp(2rem, 4.2vw, 3.25rem);
+    font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
     line-height: 1.1;
     letter-spacing: -0.026em;
+  }
+
+  /* Standalone text links ("Explore …", "View on map") get a full 44px touch
+     target without looking like buttons. Not for links inside running text. */
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
   }
 
   /* Text hover: underline grows from the left. */
